@@ -26,11 +26,7 @@ public:
 
   virtual void connectDevice() = 0; // абстрактный метод для подключения к устройству
   virtual void sendData(const QByteArray &cmdToSend, bool waitAnswer = false) = 0; // абстрактный метод для отправки команды
-  void sendCommand(const QString &cmdName, ETypeCommand cmdType = T_CMD_REQUEST,
-                   const QString &cmdParams = QString(),
-                   const QByteArray &cmdBinData = QByteArray());
   void sendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr);
-  void setTrackerPassword(const QString password);
 
   virtual void setupParams(const QString &portName) {}
 
@@ -50,7 +46,7 @@ protected:
 signals:
   void signalConnectionResult(bool result);
   void signalDisconnected();
-  void signalGotAnswer(const QByteArray &answer);
+  void signalGotAnswer(const CAnswerBuffer &answer);
 
 // ************** SIGNALS **************
 

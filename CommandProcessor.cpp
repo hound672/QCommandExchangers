@@ -90,6 +90,8 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
     // TODO сделать рефакторинг по умнее раскидать все
     bool hasAnswer = !answerDescr->answer.isEmpty();
     bool hasStatus = !answerDescr->m_waitResult;
+    bool needAnswer = descr && answerDescr->answer.isEmpty();
+    qDebug() << "Need answer: " << needAnswer;
 
     if (descr) {
 
