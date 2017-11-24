@@ -1,0 +1,3 @@
+[submodule "ComPortThread"]
+	path = ComPortThread
+	url = https://hound672@bitbucket.org/hound672/hound-comportthread.git
