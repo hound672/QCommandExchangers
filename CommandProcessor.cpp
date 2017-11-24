@@ -132,9 +132,9 @@ void CCommandProcessor::slotTimeout()
 
   // если истек таймаут ожидания ответа на команду, сбрасываем буффер и удалчяем эту команду из списка
   CCommandProcessor::SAnswerDescr answerDescr = this->commandsList[0];
-  quint32 currentTime = QDateTime::currentMSecsSinceEpoch() / 1000;
+  quint32 currentTime = QDateTime::currentMSecsSinceEpoch();
 
-  if (answerDescr.m_timeout + answerDescr.timeSend > currentTime) {
+  if (answerDescr.m_timeout + answerDescr.timeSend < currentTime) {
     qDebug() << "Error timeout!!!";
     this->removeFirstCommand();
   }

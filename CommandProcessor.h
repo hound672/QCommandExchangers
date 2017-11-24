@@ -33,7 +33,7 @@ public:
       m_answerDescr(answerDescr),
       m_waitResult(waitResult),
       m_timeout(timeout),
-      timeSend(QDateTime::currentMSecsSinceEpoch() / 1000)
+      timeSend(QDateTime::currentMSecsSinceEpoch())
     {answer.setCmdId(cmdId);}
 
   };
