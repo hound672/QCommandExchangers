@@ -40,7 +40,6 @@ void CCommandProcessor::gotFullAnswer()
   CCommandProcessor::SAnswerDescr answerDescr = this->commandsList[0];
   qDebug() << "Got full answer: " << answerDescr.answer;
 
-//  this->answerBuffer.setCmdId(answerDescr.m_cmdId);
   emit this->signalGotAnswer(answerDescr.answer);
   this->removeFirstCommand();
 }
@@ -84,35 +83,25 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
     CCommandProcessor::SAnswerDescr *answerDescr = &(this->commandsList[0]);
     const CCommandBuffer::STextParsingDesc *descr = answerDescr->m_answerDescr;
 
-    qDebug() << "Have completed line. Parse";
-    qDebug() << "Line: " << this->buffer.getLine();
-
-    // TODO сделать рефакторинг по умнее раскидать все
-    bool hasAnswer = !answerDescr->answer.isEmpty();
-    bool hasStatus = !answerDescr->m_waitResult;
-    bool needAnswer = descr && answerDescr->answer.isEmpty();
-    qDebug() << "Need answer: " << needAnswer;
-
-    if (descr) {
-
-      if (this->buffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
-        qDebug() << "Parse ok!";
-        answerDescr->answer.append(this->buffer.getLine());
-        hasAnswer = true;
-      }
-
-    } else {
-      // не ожидаем ответа
-      hasAnswer = true;
-    } // if (descr)
-
-    // проверка на получение всех ответов на команду
-    if (hasAnswer && hasStatus) {
-      this->gotFullAnswer();
+    if (descr && answerDescr->answer.isEmpty() && this->buffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
+      // ожидали ответ и получили его
+      answerDescr->answer.append(this->buffer.getLine());
+      answerDescr->state ^= EStateAnswer::ST_A_WAIT_ANSWER;
     }
 
-    if (this->buffer.parse(descrOk) == CCommandBuffer::PARSE_OK) {
-      hasStatus = true;
+    if (answerDescr->m_waitResult) {
+      // ожидлаем ответ о выполнении команды
+      CCommandBuffer::EResultParse res;
+      if ((res = this->buffer.parse(descrOk)) == CCommandBuffer::PARSE_OK) {
+        // получили статус выполнения, который ждали
+      }
+
+      if (res == CCommandBuffer::PARSE_OK) {
+        answerDescr->state ^= EStateAnswer::ST_A_WAIT_RESULT;
+      }
+    }
+
+    if (answerDescr->state == EStateAnswer::ST_A_DONE) {
       this->gotFullAnswer();
     }
 

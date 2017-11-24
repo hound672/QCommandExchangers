@@ -14,6 +14,12 @@ class CCommandProcessor : public QObject
 
 public:
 
+  enum EStateAnswer {
+    ST_A_WAIT_ANSWER = 0x01,
+    ST_A_WAIT_RESULT = 0x02,
+    ST_A_DONE = 0x00,
+  };
+
   /*********************************************
    *  Структура описывающяя условия ответа на команду
    *  Таймаут ее ожидания, ожидание статуса выполнения и т.п
@@ -26,6 +32,7 @@ public:
 
     CAnswerBuffer answer; // буфер под ответ на команду
     quint32 timeSend; // время когда была отправленна команда
+    quint8 state;
 
     SAnswerDescr(quint32 cmdId, const CCommandBuffer::STextParsingDesc *answerDescr = NULL,
                  bool waitResult = false, quint32 timeout = 1000) :
@@ -34,7 +41,12 @@ public:
       m_waitResult(waitResult),
       m_timeout(timeout),
       timeSend(QDateTime::currentMSecsSinceEpoch())
-    {answer.setCmdId(cmdId);}
+    {
+      answer.setCmdId(cmdId);
+      state = 0;
+      if (answerDescr) state |= ST_A_WAIT_ANSWER;
+      if (waitResult) state |= ST_A_WAIT_RESULT;
+    }
 
   };
 
