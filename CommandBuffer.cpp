@@ -85,12 +85,13 @@ void CCommandBuffer::resetBuffer()
 CCommandBuffer::EResultParse CCommandBuffer::parse(const CCommandBuffer::STextParsingDesc &parseDescr)
 {
   if (!QByteArray::startsWith(parseDescr.m_prefix)) {
-    qDebug() << "Error prefix!";
     return EResultParse::PARSE_ERROR_PREFIX;
   }
 
   char separator = parseDescr.m_separator;
-  this->splitData = QByteArray::split(separator);
+  int pos = parseDescr.m_prefix.size() + 1;
+  QByteArray tmpData = this->getLine().mid(pos);
+  this->splitData = tmpData.split(separator);
 
   return EResultParse::PARSE_OK;
 }
@@ -106,11 +107,24 @@ CCommandBuffer::EResultParse CCommandBuffer::getParam(quint32 index, QByteArray 
     return EResultParse::PARSE_ERROR_NEED_PARSE;
   }
 
-  if (index > (quint32)this->splitData.size()) {
+  if (index >= (quint32)this->splitData.size()) {
     return EResultParse::PARSE_ERROR_INDEX;
   }
 
   data = this->splitData[index];
 
   return EResultParse::PARSE_OK;
+}
+
+/**
+  * @brief  Возвращает параметр в виде числа
+  * @param
+  * @retval
+  */
+int CCommandBuffer::getParamInt(quint32 index)
+{
+  QByteArray value;
+  this->getParam(index, value);
+
+  return value.toInt();
 }

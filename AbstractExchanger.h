@@ -47,11 +47,13 @@ signals:
   void signalConnectionResult(bool result);
   void signalDisconnected();
   void signalGotAnswer(const CAnswerBuffer &answer);
+  void signalErrorTimeout(const CAnswerBuffer &answerBuffer);
 
 // ************** SIGNALS **************
 
 private slots:
   void slotGotAnswer(const CAnswerBuffer &answer);
+  void slotErrorTimeout(const CAnswerBuffer &answer);
 };
 
 #endif // ABSTRACTEXCHANGER_H

@@ -15,6 +15,8 @@ CAbstractExchanger::CAbstractExchanger(QObject *parent) : QObject(parent)
 
   connect(this->commandProcessor, SIGNAL(signalGotAnswer(const CAnswerBuffer&)),
           this, SLOT(slotGotAnswer(const CAnswerBuffer&)));
+  connect(this->commandProcessor, SIGNAL(signalErrorTimeout(const CAnswerBuffer&)),
+          this, SLOT(slotErrorTimeout(const CAnswerBuffer&)));
 }
 
 /**
@@ -50,8 +52,12 @@ void CAbstractExchanger::gotIncomingData(const QByteArray &answer)
 
 void CAbstractExchanger::slotGotAnswer(const CAnswerBuffer &answer)
 {
-  qDebug() << "Got answer: " << answer;
   emit this->signalGotAnswer(answer);
+}
+
+void CAbstractExchanger::slotErrorTimeout(const CAnswerBuffer &answer)
+{
+  emit this->signalErrorTimeout(answer);
 }
 
 /* ******************* END *****************************

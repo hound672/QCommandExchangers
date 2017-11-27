@@ -2,8 +2,37 @@
 
 #include "CommandProcessor.h"
 
+// ---------------------------------------------------------------
+
 
 static const CCommandBuffer::STextParsingDesc descrOk = {"$OK", ','};
+static const CCommandBuffer::STextParsingDesc descrErr = {"$ERR", ','};
+
+/* ***************** BEGIN *****************************
+   ****************** PUBLIC методы ********************
+   ***************************************************** */
+
+/**
+  * @brief  Констурктор для структуры с описанием ответа на команду
+  * @param  cmdId: Некий идентификатор команды
+  * @param  answerDescr: структура с описанием разбора ответа
+  * @param  waitResult: флаг ожидания ответа на выолнение команды, обычно OK/ERROR
+  * @param  timeout: таймаут в мс ожидания ответа на команду
+  * @retval
+  */
+CCommandProcessor::SAnswerDescr::SAnswerDescr(quint32 cmdId, const CCommandBuffer::STextParsingDesc *answerDescr, bool waitResult, quint32 timeout) :
+  m_cmdId(cmdId),
+  m_answerDescr(answerDescr),
+  m_waitResult(waitResult),
+  m_timeout(timeout),
+  timeSend(QDateTime::currentMSecsSinceEpoch())
+{
+  answer.setCmdId(cmdId);
+  state = 0;
+  if (answerDescr) state |= ST_A_WAIT_ANSWER;
+  if (waitResult) state |= ST_A_WAIT_RESULT;
+}
+
 
 CCommandProcessor::CCommandProcessor(QObject *parent) : QObject(parent)
 {
@@ -11,12 +40,6 @@ CCommandProcessor::CCommandProcessor(QObject *parent) : QObject(parent)
           this, SLOT(slotTimeout()));
 
   this->timer.start(CCommandProcessor::TIMEOUT);
-}
-
-void CCommandProcessor::sendCommand(const QByteArray &command, const CCommandProcessor::SAnswerDescr &answerDescr)
-{
-  // send command to device
-  this->commandsList.append(answerDescr);
 }
 
 /**
@@ -94,6 +117,12 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
       CCommandBuffer::EResultParse res;
       if ((res = this->buffer.parse(descrOk)) == CCommandBuffer::PARSE_OK) {
         // получили статус выполнения, который ждали
+        answerDescr->answer.setResultStatus(0);
+      }
+
+      if ((res = this->buffer.parse(descrErr)) == CCommandBuffer::PARSE_OK) {
+        qDebug() << "Got error answer: " << this->buffer.getParamInt(0);
+        answerDescr->answer.setResultStatus(this->buffer.getParamInt(0));
       }
 
       if (res == CCommandBuffer::PARSE_OK) {
@@ -108,8 +137,6 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
     this->buffer.releaseLine();
 
   } // while
-
-  qDebug() << "No more line data";
 }
 
 void CCommandProcessor::slotTimeout()
@@ -125,6 +152,8 @@ void CCommandProcessor::slotTimeout()
 
   if (answerDescr.m_timeout + answerDescr.timeSend < currentTime) {
     qDebug() << "Error timeout!!!";
+    emit this->signalErrorTimeout(answerDescr.answer);
     this->removeFirstCommand();
   }
 }
+
