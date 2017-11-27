@@ -14,15 +14,14 @@ public:
 
   void connectDevice();
   void sendData(const QByteArray &cmdToSend, bool waitAnswer = false);
-  void setupParams(const QString &portName);
+  void setupParams(const QString &portNameDescriptor);
 
 // ************** PUBLIC **************
 
 private:
-  static const QString DEVICE_DESCRIPTION; // имя устройства для поиска его в список подключенных устройств к ПК
   ComPortThread *comPort;
   QByteArray answerBuffer; // буффер для хранения ответа от трекера
-  QString portName;
+  QString portNameDescriptor;
 
   void makeSingnalSlots();
   QString getPortName();

@@ -4,10 +4,6 @@
 #include "ComportExchanger.h"
 
 
-const QString CComPortExchanger::DEVICE_DESCRIPTION = "STMicroelectronics Virtual COM Port";
-//const QString CComPortExchanger::DEVICE_DESCRIPTION = "Virtual Serial Port (Eltima Softwate)";
-//const QString CComPortExchanger::DEVICE_DESCRIPTION = "Autosat On-Board Terminal";
-
 // ---------------------------------------------------------------
 
 /* ***************** BEGIN *****************************
@@ -65,12 +61,12 @@ void CComPortExchanger::sendData(const QByteArray &cmdToSend, bool waitAnswer)
 
 /**
   * @brief  Сохраняет переданный в установочных параметрах номер COM порта
-  * @param
+  * @param  Или номер порта в формате ("COMXX") или его текстовый дескриптор
   * @retval
   */
-void CComPortExchanger::setupParams(const QString &portName)
+void CComPortExchanger::setupParams(const QString &portNameDescriptor)
 {
-  this->portName = portName;
+  this->portNameDescriptor = portNameDescriptor;
 }
 
 /* ******************* END *****************************
@@ -105,13 +101,12 @@ void CComPortExchanger::makeSingnalSlots()
   */
 QString CComPortExchanger::getPortName()
 {
-  if (!this->portName.isEmpty()) {
-    // ранее выставили номер COM порта выдаем его
-    return this->portName;
+  if (this->portNameDescriptor.startsWith("COM")) {
+    return this->portNameDescriptor;
   }
 
   foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
-    if (info.description() == CComPortExchanger::DEVICE_DESCRIPTION) {
+    if (info.description() == this->portNameDescriptor) {
       return info.portName();
     }
   }
