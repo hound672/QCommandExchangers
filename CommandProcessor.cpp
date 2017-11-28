@@ -59,6 +59,10 @@ void CCommandProcessor::addAnswerWait(const CCommandProcessor::SAnswerDescr &ans
   */
 void CCommandProcessor::gotFullAnswer()
 {
+  if (this->commandsList.isEmpty()) {
+    qDebug() << "Call gotFullAnswer when commandsList is empty!";
+    return;
+  }
 
   CCommandProcessor::SAnswerDescr answerDescr = this->commandsList[0];
   qDebug() << "Got full answer: " << answerDescr.answer;
@@ -112,7 +116,7 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
       answerDescr->state ^= EStateAnswer::ST_A_WAIT_ANSWER;
     }
 
-    if (answerDescr->m_waitResult) {
+    if (answerDescr->m_waitResult && answerDescr->state & EStateAnswer::ST_A_WAIT_RESULT) {
       // ожидлаем ответ о выполнении команды
       CCommandBuffer::EResultParse res;
       if ((res = this->buffer.parse(descrOk)) == CCommandBuffer::PARSE_OK) {

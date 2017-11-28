@@ -64,7 +64,7 @@ void CComPortExchanger::sendData(const QByteArray &cmdToSend, bool waitAnswer)
   * @param  Или номер порта в формате ("COMXX") или его текстовый дескриптор
   * @retval
   */
-void CComPortExchanger::setupParams(const QString &portNameDescriptor)
+void CComPortExchanger::setupComPort(const QString &portNameDescriptor)
 {
   this->portNameDescriptor = portNameDescriptor;
 }

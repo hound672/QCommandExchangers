@@ -14,7 +14,7 @@ public:
 
   void connectDevice();
   void sendData(const QByteArray &cmdToSend, bool waitAnswer = false);
-  void setupParams(const QString &portNameDescriptor);
+  void setupComPort(const QString &portNameDescriptor);
 
 // ************** PUBLIC **************
 

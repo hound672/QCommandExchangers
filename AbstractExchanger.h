@@ -28,8 +28,6 @@ public:
   virtual void sendData(const QByteArray &cmdToSend, bool waitAnswer = false) = 0; // абстрактный метод для отправки команды
   void sendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr);
 
-  virtual void setupParams(const QString &portName) {}
-
 // ************** PUBLIC **************
 
 private:
