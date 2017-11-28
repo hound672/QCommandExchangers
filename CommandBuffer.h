@@ -42,8 +42,12 @@ public:
   void releaseLine();
   void resetBuffer();
   EResultParse parse(const STextParsingDesc &parseDescr);
-  EResultParse getParam(quint32 index, QByteArray &data);
-  int getParamInt(quint32 index);
+  EResultParse getParam(quint32 index, QByteArray &data) const;
+  QByteArray getParamArray(quint32 index) const;
+  QString getParamString(quint32 index) const;
+  QStringList getParamStringList(quint32 index) const;
+  int getParamInt(quint32 index) const;
+  int getParamIntFromHex(quint32 index) const;
 
 private:
   QList<QByteArray> splitData; // данные после метода parse разделенные согласно переданому ранее сепаратору

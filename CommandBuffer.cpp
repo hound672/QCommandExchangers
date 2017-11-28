@@ -92,7 +92,6 @@ CCommandBuffer::EResultParse CCommandBuffer::parse(const CCommandBuffer::STextPa
   int pos = parseDescr.m_prefix.size() + 1;
   QByteArray tmpData = this->getLine().mid(pos);
   this->splitData = tmpData.split(separator);
-
   return EResultParse::PARSE_OK;
 }
 
@@ -101,7 +100,7 @@ CCommandBuffer::EResultParse CCommandBuffer::parse(const CCommandBuffer::STextPa
   * @param
   * @retval
   */
-CCommandBuffer::EResultParse CCommandBuffer::getParam(quint32 index, QByteArray &data)
+CCommandBuffer::EResultParse CCommandBuffer::getParam(quint32 index, QByteArray &data) const
 {
   if (splitData.isEmpty()) {
     return EResultParse::PARSE_ERROR_NEED_PARSE;
@@ -116,15 +115,59 @@ CCommandBuffer::EResultParse CCommandBuffer::getParam(quint32 index, QByteArray 
   return EResultParse::PARSE_OK;
 }
 
+QByteArray CCommandBuffer::getParamArray(quint32 index) const
+{
+  QByteArray value;
+  this->getParam(index, value);
+
+  return value;
+}
+
+QString CCommandBuffer::getParamString(quint32 index) const
+{
+  QByteArray value;
+  this->getParam(index, value);
+
+  return QString::fromUtf8(value);
+}
+
+/**
+  * @brief  Возвращает список параметров
+  * @param  index: начальный индекс с которого создавать список
+  * @retval
+  */
+QStringList CCommandBuffer::getParamStringList(quint32 index) const
+{
+  QStringList data;
+
+  for (quint32 i = index; i < this->splitData.size(); i++) {
+    data.append(this->getParamString(i));
+  }
+  return data;
+}
+
 /**
   * @brief  Возвращает параметр в виде числа
   * @param
   * @retval
   */
-int CCommandBuffer::getParamInt(quint32 index)
+int CCommandBuffer::getParamInt(quint32 index) const
 {
   QByteArray value;
   this->getParam(index, value);
 
   return value.toInt();
+}
+
+/**
+  * @brief  Возращает параметр в виде числа, который был представлен HEX строкой
+  * @param
+  * @retval
+  */
+int CCommandBuffer::getParamIntFromHex(quint32 index) const
+{
+  QByteArray value;
+  this->getParam(index, value);
+
+  return value.toInt(NULL, 16);
 }

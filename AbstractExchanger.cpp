@@ -9,7 +9,9 @@
    ****************** PUBLIC методы ********************
    ***************************************************** */
 
-CAbstractExchanger::CAbstractExchanger(QObject *parent) : QObject(parent)
+CAbstractExchanger::CAbstractExchanger(QObject *parent) :
+  QObject(parent),
+  directMode(false)
 {
   this->commandProcessor = new CCommandProcessor();
 
@@ -30,6 +32,17 @@ void CAbstractExchanger::sendCommand(const QByteArray &cmdToSend, const CCommand
   this->commandProcessor->addAnswerWait(answerDescr);
 }
 
+/**
+  * @brief  Изменяет режим прямой отправки данных, при котором все данные отправляются "как есть"
+  *         и принимаются "как есть"
+  * @param
+  * @retval
+  */
+void CAbstractExchanger::setDirectMode(bool mode)
+{
+  this->directMode = mode;
+}
+
 /* ******************* END *****************************
    ****************** PUBLIC методы ********************
    ***************************************************** */
@@ -47,6 +60,13 @@ void CAbstractExchanger::sendCommand(const QByteArray &cmdToSend, const CCommand
   */
 void CAbstractExchanger::gotIncomingData(const QByteArray &answer)
 {
+  if (this->directMode) {
+    CAnswerBuffer data;
+    data.append(answer);
+    emit this->signalGotAnswer(data);
+    return;
+  }
+
   this->commandProcessor->slotIncomingData(answer);
 }
 

@@ -113,6 +113,9 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
     if (descr && answerDescr->answer.isEmpty() && this->buffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
       // ожидали ответ и получили его
       answerDescr->answer.append(this->buffer.getLine());
+      answerDescr->answer.append(0x0A);
+      answerDescr->answer.checkLine();
+      answerDescr->answer.parse(*descr);
       answerDescr->state ^= EStateAnswer::ST_A_WAIT_ANSWER;
     }
 
@@ -122,9 +125,7 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
       if ((res = this->buffer.parse(descrOk)) == CCommandBuffer::PARSE_OK) {
         // получили статус выполнения, который ждали
         answerDescr->answer.setResultStatus(0);
-      }
-
-      if ((res = this->buffer.parse(descrErr)) == CCommandBuffer::PARSE_OK) {
+      } else if ((res = this->buffer.parse(descrErr)) == CCommandBuffer::PARSE_OK) {
         qDebug() << "Got error answer: " << this->buffer.getParamInt(0);
         answerDescr->answer.setResultStatus(this->buffer.getParamInt(0));
       }
