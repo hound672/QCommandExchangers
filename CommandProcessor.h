@@ -69,7 +69,6 @@ private:
 
 signals:
   void signalGotAnswer(const CAnswerBuffer &answerBuffer); // Сигнал о получении ответа на команду
-  void signalErrorTimeout(const CAnswerBuffer &answerBuffer); // Сигнал об ошибке таймаута ожидания ответа
 
 // ************** SIGNALS **************
 

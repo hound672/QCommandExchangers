@@ -2,7 +2,8 @@
 
 CAnswerBuffer::CAnswerBuffer() :
   cmdId(0),
-  resultStatus(0)
+  resultCode(0),
+  resultStatus(EResultStatus::RS_OK)
 {
 
 }
