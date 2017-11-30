@@ -17,13 +17,11 @@ public:
   virtual void connectDevice() = 0; // абстрактный метод для подключения к устройству
   virtual void sendData(const QByteArray &cmdToSend, bool waitAnswer = false) = 0; // абстрактный метод для отправки команды
   void sendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr);
-  void setDirectMode(bool mode);
 
 // ************** PUBLIC **************
 
 private:
   CCommandProcessor *commandProcessor;
-  bool directMode; // режим "прямой" отправки и получения данных
 
 // ************** PRIVATE **************
 
@@ -36,6 +34,7 @@ signals:
   void signalConnectionResult(bool result);
   void signalDisconnected();
   void signalGotAnswer(const CAnswerBuffer &answer);
+  void signalGotRawData(const QByteArray &data);
   void signalErrorTimeout(const CAnswerBuffer &answerBuffer);
 
 // ************** SIGNALS **************
