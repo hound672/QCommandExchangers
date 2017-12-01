@@ -5,6 +5,7 @@
 #include <cstdio>
 
 #include "TestCommandBuffer.h"
+#include "TestAnswerBuffer.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,6 +13,7 @@ int main(int argc, char *argv[])
   QCoreApplication a(argc, argv);
 
   QTest::qExec(new CTestCommandBuffer, argc, argv);
+  QTest::qExec(new CTestAnswerBuffer, argc, argv);
 
   return 0;
 }

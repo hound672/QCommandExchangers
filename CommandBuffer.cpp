@@ -88,11 +88,7 @@ CCommandBuffer::EResultParse CCommandBuffer::parse(const CCommandBuffer::STextPa
   if (!QByteArray::startsWith(parseDescr.m_prefix)) {
     return EResultParse::PARSE_ERROR_PREFIX;
   }
-
-  char separator = parseDescr.m_separator;
-  int pos = parseDescr.m_prefix.size() + 1;
-  QByteArray tmpData = this->getLine().mid(pos);
-  this->splitData = tmpData.split(separator);
+  this->splitData = this->splitParams(parseDescr);
   return EResultParse::PARSE_OK;
 }
 
@@ -103,6 +99,8 @@ CCommandBuffer::EResultParse CCommandBuffer::parse(const CCommandBuffer::STextPa
   */
 CCommandBuffer::EResultParse CCommandBuffer::getParam(quint32 index, QByteArray &data) const
 {
+  qDebug() << "Call getParam in CCommandBuffer";
+
   if (splitData.isEmpty()) {
     return EResultParse::PARSE_ERROR_NEED_PARSE;
   }
@@ -111,7 +109,7 @@ CCommandBuffer::EResultParse CCommandBuffer::getParam(quint32 index, QByteArray 
     return EResultParse::PARSE_ERROR_INDEX;
   }
 
-  data = this->splitData[index];
+  data = this->getParam(this->splitData, index);
 
   return EResultParse::PARSE_OK;
 }
@@ -140,9 +138,15 @@ QString CCommandBuffer::getParamString(quint32 index) const
 QStringList CCommandBuffer::getParamStringList(quint32 index) const
 {
   QStringList data;
+  int cnt = index;
 
-  for (quint32 i = index; i < this->splitData.size(); i++) {
-    data.append(this->getParamString(i));
+  while (true) {
+    QString str = this->getParamString(cnt++);
+    if (str.isEmpty()) {
+      break;
+    }
+
+    data.append(str);
   }
   return data;
 }
@@ -171,4 +175,31 @@ int CCommandBuffer::getParamIntFromHex(quint32 index) const
   this->getParam(index, value);
 
   return value.toInt(NULL, 16);
+}
+
+/**
+  * @brief  Из переданного списка возвращает запрашиваемый параметр
+  * @param
+  * @retval
+  */
+QByteArray CCommandBuffer::getParam(const QList<QByteArray> list, quint32 index) const
+{
+  if (index >= (quint32)list.size()) {
+    return QByteArray();
+  }
+
+  return list[index];
+}
+
+/**
+  * @brief  Возвращает список с разделенными параметрами
+  * @param
+  * @retval
+  */
+QList<QByteArray> CCommandBuffer::splitParams(const CCommandBuffer::STextParsingDesc &parseDescr) const
+{
+  char separator = parseDescr.m_separator;
+  int pos = parseDescr.m_prefix.size() + 1;
+  QByteArray tmpData = this->getLine().mid(pos);
+  return tmpData.split(separator);
 }

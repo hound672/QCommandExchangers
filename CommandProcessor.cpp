@@ -25,10 +25,10 @@ CCommandProcessor::SAnswerDescr::SAnswerDescr(quint32 cmdId, const CCommandBuffe
   m_answerDescr(answerDescr),
   m_waitResult(waitResult),
   m_timeout(timeout),
-  timeSend(QDateTime::currentMSecsSinceEpoch())
+  timeSend(QDateTime::currentMSecsSinceEpoch()),
+  answer(cmdId, answerDescr),
+  state(0)
 {
-  answer.setCmdId(cmdId);
-  state = 0;
   if (answerDescr) state |= ST_A_WAIT_ANSWER;
   if (waitResult) state |= ST_A_WAIT_RESULT;
 }
@@ -112,10 +112,12 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
 
     if (descr && this->buffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
       // ожидали ответ и получили его
-      answerDescr->answer.append(this->buffer.getLine());
-      answerDescr->answer.append(0x0A);
-      answerDescr->answer.checkLine();
-      answerDescr->answer.parse(*descr);
+	  // TODO CHECK IT
+      // answerDescr->answer.append(this->buffer.getLine());
+      // answerDescr->answer.append(0x0A);
+          answerDescr->answer.appendString(this->buffer.getLine());
+//      answerDescr->answer.checkLine();
+//      answerDescr->answer.parse(*descr);
       answerDescr->state ^= (answerDescr->state & EStateAnswer::ST_A_WAIT_ANSWER);
     }
 

@@ -89,7 +89,7 @@ void CTestCommandBuffer::testDiagParse()
 
   int cnt = 0;
 
-  QList<QByteArray> samples {
+  QList<QByteArray> samples = {
     "$DIAG:HSE,0",
     "$DIAG:RTC,0",
     "$DIAG:ShDt,0",

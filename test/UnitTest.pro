@@ -12,8 +12,10 @@ TEMPLATE = app
 INCLUDEPATH += $$PWD\..\
 
 SOURCES += main.cpp \
-    $$PWD\..\CommandBuffer.cpp \
-    TestCommandBuffer.cpp
+    ../CommandBuffer.cpp \
+    ../AnswerBuffer.cpp \
+    TestCommandBuffer.cpp \
+    TestAnswerBuffer.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -27,5 +29,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
-    $$PWD\..\CommandBuffer.h \
-    TestCommandBuffer.h
+    ../CommandBuffer.h \
+    ../AnswerBuffer.h \
+    TestCommandBuffer.h \
+    TestAnswerBuffer.h

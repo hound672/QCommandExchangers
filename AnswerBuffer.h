@@ -16,7 +16,9 @@ public:
   };
 
 public:
-  CAnswerBuffer();
+  CAnswerBuffer(qint32 cmdId = 0, const CCommandBuffer::STextParsingDesc *answerDescr = NULL);
+  CCommandBuffer::EResultParse getParam(quint32 index, QByteArray &data) const;
+  void appendString(const QByteArray &dataToAdd);
 
   void setCmdId(quint32 cmdId) {this->cmdId = cmdId;}
   quint32 getCmdId() const {return this->cmdId;}
@@ -29,6 +31,7 @@ private:
   quint32 cmdId; // идентификатор команды
   quint32 resultCode; // код результата выполнения команды
   EResultStatus resultStatus; // Состояние выполнения команды
+  CCommandBuffer::STextParsingDesc answerDescr;
 };
 
 #endif // ANSWERBUFFER_H
