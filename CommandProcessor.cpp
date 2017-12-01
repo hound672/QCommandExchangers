@@ -20,11 +20,12 @@ static const CCommandBuffer::STextParsingDesc descrErr = {"$ERR", ','};
   * @param  timeout: таймаут в мс ожидания ответа на команду
   * @retval
   */
-CCommandProcessor::SAnswerDescr::SAnswerDescr(quint32 cmdId, const CCommandBuffer::STextParsingDesc *answerDescr, bool waitResult, quint32 timeout) :
+CCommandProcessor::SAnswerDescr::SAnswerDescr(quint32 cmdId, const CCommandBuffer::STextParsingDesc *answerDescr, bool waitResult, quint32 timeout, const CCommandBuffer::STextParsingDesc *descrOk) :
   m_cmdId(cmdId),
   m_answerDescr(answerDescr),
   m_waitResult(waitResult),
   m_timeout(timeout),
+  m_descrOk(descrOk),
   timeSend(QDateTime::currentMSecsSinceEpoch()),
   answer(cmdId),
   state(0)
@@ -80,7 +81,17 @@ void CCommandProcessor::removeFirstCommand()
 {
   if (!this->commandsList.isEmpty()) {
     this->commandsList.removeFirst();
-  }
+    }
+}
+
+/**
+  * @brief  Парсит переданный буффер на проверку наличия в ней положительного результаты выполнения команды
+  * @param
+  * @retval
+  */
+CCommandBuffer::EResultParse CCommandProcessor::checkOkResult()
+{
+
 }
 
 /**
@@ -98,7 +109,6 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
 //    qDebug() << "Got data when we do not wait it";
 //    return;
 //  }
-
   this->buffer.append(data); // добавляем данные в буффер
 
   while (this->buffer.checkLine() == CCommandBuffer::LINE_COMPELETED) {
@@ -118,16 +128,16 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
 
     if (answerDescr->m_waitResult && answerDescr->state & EStateAnswer::ST_A_WAIT_RESULT) {
       // ожидлаем ответ о выполнении команды
+      const CCommandBuffer::STextParsingDesc *descrForOk;
       CCommandBuffer::EResultParse res;
 
-      if ((res = this->buffer.parse(descrOk)) == CCommandBuffer::PARSE_OK) {
+      descrForOk = answerDescr->m_descrOk ? answerDescr->m_descrOk : &descrOk;
 
+      if ((res = this->buffer.parse(*descrForOk)) == CCommandBuffer::PARSE_OK) {
         // получили статус выполнения, который ждали
         answerDescr->answer.setResultCode(0);
-
       } else if ((res = this->buffer.parse(descrErr)) == CCommandBuffer::PARSE_OK) {
 
-        qDebug() << "Got error answer: " << this->buffer.getParamInt(0);
         answerDescr->answer.setResultCode(this->buffer.getParamInt(0));
         answerDescr->answer.setResultStatus(CAnswerBuffer::EResultStatus::RS_ERROR);
 

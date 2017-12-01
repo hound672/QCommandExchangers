@@ -85,7 +85,7 @@ void CCommandBuffer::resetBuffer()
   */
 CCommandBuffer::EResultParse CCommandBuffer::parse(const CCommandBuffer::STextParsingDesc &parseDescr)
 {
-  if (!QByteArray::startsWith(parseDescr.m_prefix)) {
+  if (!this->getLine().startsWith(parseDescr.m_prefix)) {
     return EResultParse::PARSE_ERROR_PREFIX;
   }
   this->splitData = this->splitParams(parseDescr);

@@ -15,7 +15,9 @@ SOURCES += main.cpp \
     ../CommandBuffer.cpp \
     ../AnswerBuffer.cpp \
     TestCommandBuffer.cpp \
-    TestAnswerBuffer.cpp
+    TestAnswerBuffer.cpp \
+    ../CommandProcessor.cpp \
+    TestCommandProcessor.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -32,4 +34,6 @@ HEADERS += \
     ../CommandBuffer.h \
     ../AnswerBuffer.h \
     TestCommandBuffer.h \
-    TestAnswerBuffer.h
+    TestAnswerBuffer.h \
+    ../CommandProcessor.h \
+    TestCommandProcessor.h

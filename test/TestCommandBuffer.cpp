@@ -132,6 +132,6 @@ void CTestCommandBuffer::testDiagParse()
     cnt++;
 
     this->buffer.releaseLine();
-  }
+     }
 }
 
