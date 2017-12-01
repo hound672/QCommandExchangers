@@ -1,10 +1,11 @@
 #ifndef ANSWERBUFFER_H
 #define ANSWERBUFFER_H
 
+#include <QList>
 
 #include "CommandBuffer.h"
 
-class CAnswerBuffer : public CCommandBuffer
+class CAnswerBuffer : public QList<CCommandBuffer>
 {
 
 public:
@@ -16,14 +17,17 @@ public:
   };
 
 public:
-  CAnswerBuffer(qint32 cmdId = 0, const CCommandBuffer::STextParsingDesc *answerDescr = NULL);
-  CCommandBuffer::EResultParse getParam(quint32 index, QByteArray &data) const;
-  void appendString(const QByteArray &dataToAdd);
+  CAnswerBuffer(qint32 cmdId = 0);
+  void append(const QByteArray &dataToAdd, const CCommandBuffer::STextParsingDesc &parseDescr);
+  CCommandBuffer first() const;
+  CCommandBuffer last() const;
 
   void setCmdId(quint32 cmdId) {this->cmdId = cmdId;}
   quint32 getCmdId() const {return this->cmdId;}
+
   void setResultCode(quint32 resultStatus) {this->resultCode = resultStatus;}
   quint32 getResultCode() const {return this->resultCode;}
+
   void setResultStatus(EResultStatus state) {this->resultStatus = state;}
   EResultStatus getResultStatus() const {return this->resultStatus;}
 
@@ -31,7 +35,6 @@ private:
   quint32 cmdId; // идентификатор команды
   quint32 resultCode; // код результата выполнения команды
   EResultStatus resultStatus; // Состояние выполнения команды
-  CCommandBuffer::STextParsingDesc answerDescr;
 };
 
 #endif // ANSWERBUFFER_H

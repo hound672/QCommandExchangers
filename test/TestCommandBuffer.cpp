@@ -14,6 +14,19 @@ CTestCommandBuffer::CTestCommandBuffer(QObject *parent) : QObject(parent)
   buffer.append("$OK\r\n$ERR:256\r\n$TEST:9812,AABB,HELLO,1,2,3\r\n$DIFSEP:1/2/3\r\n");
 }
 
+void CTestCommandBuffer::testContructor()
+{
+  QByteArray tmpStr("HELLO_WORLD\r\n");
+  CCommandBuffer cmdBuf1;
+  CCommandBuffer cmdBuf2(tmpStr);
+
+  QCOMPARE(cmdBuf1.size(), 0);
+  QCOMPARE(cmdBuf2.size(), tmpStr.size());
+
+  QCOMPARE(cmdBuf2.checkLine(), CCommandBuffer::LINE_COMPELETED);
+  QCOMPARE(cmdBuf2.getLine(), QByteArray("HELLO_WORLD"));
+}
+
 void CTestCommandBuffer::checkLine()
 {
   QCOMPARE(buffer.checkLine(), CCommandBuffer::LINE_COMPELETED);

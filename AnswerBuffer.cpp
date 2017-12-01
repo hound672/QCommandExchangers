@@ -2,33 +2,55 @@
 
 #include "AnswerBuffer.h"
 
-CAnswerBuffer::CAnswerBuffer(qint32 cmdId, const STextParsingDesc *answerDescr) :
+CAnswerBuffer::CAnswerBuffer(qint32 cmdId) :
   resultCode(0),
   resultStatus(EResultStatus::RS_OK),
   cmdId(cmdId)
 {
-  if (answerDescr) {
-    qDebug() << "There is answerDescr add it: " << answerDescr->m_prefix;
-    this->answerDescr = *(answerDescr);
-  } else {
-    qDebug() << "There is no answerDescr add it";
-  }
-}
-
-CCommandBuffer::EResultParse CAnswerBuffer::getParam(quint32 index, QByteArray &data) const
-{
-  QList<QByteArray> list = this->splitParams(this->answerDescr);
-  data = CCommandBuffer::getParam(list, index);
 }
 
 /**
-  * @brief  Добавляет разобранную строку в буффер с добавлением символа терминирования строки
+  * @brief  Добавляет строку в список ответов и разбирает ее согласно переданному описанию
   * @param
   * @retval
   */
-void CAnswerBuffer::appendString(const QByteArray &dataToAdd)
+void CAnswerBuffer::append(const QByteArray &dataToAdd, const CCommandBuffer::STextParsingDesc &parseDescr)
 {
-  this->append(dataToAdd);
-  this->append((char)0x00);
-  this->checkLine();
+  CCommandBuffer cmdBuffer(dataToAdd);
+
+  cmdBuffer.append((char)0x00);
+  cmdBuffer.checkLine();
+  cmdBuffer.parse(parseDescr);
+
+  QList<CCommandBuffer>::append(cmdBuffer);
+}
+
+/**
+  * @brief  Переопределяет метод родительского класса для получения первого элемента.
+  *         С проверкой на пустой список
+  * @param
+  * @retval
+  */
+CCommandBuffer CAnswerBuffer::first() const
+{
+  if (QList<CCommandBuffer>::isEmpty()) {
+    return CCommandBuffer();
+  }
+
+  return QList<CCommandBuffer>::first();
+}
+
+/**
+  * @brief  Переопределяет метод родительского класса для получения последнего элемента.
+  *         С проверкой на пустой список
+  * @param
+  * @retval
+  */
+CCommandBuffer CAnswerBuffer::last() const
+{
+  if (QList<CCommandBuffer>::isEmpty()) {
+    return CCommandBuffer();
+  }
+
+  return QList<CCommandBuffer>::last();
 }

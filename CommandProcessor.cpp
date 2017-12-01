@@ -26,7 +26,7 @@ CCommandProcessor::SAnswerDescr::SAnswerDescr(quint32 cmdId, const CCommandBuffe
   m_waitResult(waitResult),
   m_timeout(timeout),
   timeSend(QDateTime::currentMSecsSinceEpoch()),
-  answer(cmdId, answerDescr),
+  answer(cmdId),
   state(0)
 {
   if (answerDescr) state |= ST_A_WAIT_ANSWER;
@@ -65,7 +65,7 @@ void CCommandProcessor::gotFullAnswer()
   }
 
   CCommandProcessor::SAnswerDescr answerDescr = this->commandsList[0];
-  qDebug() << "Got full answer: " << answerDescr.answer;
+//  qDebug() << "Got full answer: " << answerDescr.answer;
 
   emit this->signalGotAnswer(answerDescr.answer);
   this->removeFirstCommand();
@@ -112,12 +112,7 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
 
     if (descr && this->buffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
       // ожидали ответ и получили его
-	  // TODO CHECK IT
-      // answerDescr->answer.append(this->buffer.getLine());
-      // answerDescr->answer.append(0x0A);
-          answerDescr->answer.appendString(this->buffer.getLine());
-//      answerDescr->answer.checkLine();
-//      answerDescr->answer.parse(*descr);
+      answerDescr->answer.append(this->buffer.getLine(), *descr);
       answerDescr->state ^= (answerDescr->state & EStateAnswer::ST_A_WAIT_ANSWER);
     }
 

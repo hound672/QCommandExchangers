@@ -3,98 +3,86 @@
 #include "TestAnswerBuffer.h"
 
 static const CCommandBuffer::STextParsingDesc diag = {"$DIAG", ','};
+static const CCommandBuffer::STextParsingDesc descrOk = {"$OK", ','};
 
 
 CTestAnswerBuffer::CTestAnswerBuffer(QObject *parent) :
   QObject(parent),
-  buffer(0, &diag)
+  buffer(0)
 {
 
 }
 
-void CTestAnswerBuffer::makeStrings()
+void CTestAnswerBuffer::testAppend()
 {
-  CCommandBuffer cmdBuffer;
-
-  CAnswerBuffer answer(0, &diag);
-
   QList<QByteArray> samples = {
-    "$DIAG:HSE,0,1,2",
-    "$DIAG:RTC,0,1,2",
-    "$DIAG:ShDt,0,1,2",
-    "$DIAG:Flsh,0,1,2",
-    "$DIAG:GSM,0,1,2",
-    "$DIAG:SIM,8,1,2",
-    "$DIAG:SMST,-1,1,2",
-    "$DIAG:GPS,11,1,2",
-  };
-
-  for (int i = 0; i < samples.size(); i++) {
-    qDebug() << "Add sample: " << samples.at(i);
-    cmdBuffer.append(samples[i]);
-    cmdBuffer.append((char)0x00);
-  }
-
-  while (cmdBuffer.checkLine() == CCommandBuffer::LINE_COMPELETED) {
-    qDebug() << "Process line: " << cmdBuffer.getLine();
-
-    if (cmdBuffer.parse(diag) == CCommandBuffer::PARSE_OK) {
-      answer.appendString(cmdBuffer.getLine());
-    }
-
-   cmdBuffer.releaseLine();
-  }
-
-  this->testShowStrings(answer);
-}
-
-void CTestAnswerBuffer::testShowStrings(const CAnswerBuffer &answer1)
-{
-  CAnswerBuffer answer = answer1;
-  QCOMPARE(answer.getParamString(0), QString("HSE"));
-
-  do {
-    qDebug() << "Get param: " << answer.getParamArray(0)
-             << ". List: " << answer.getParamStringList(1);
-    answer.releaseLine();
-  } while (answer.checkLine() == CCommandBuffer::LINE_COMPELETED);
-}
-
-void CTestAnswerBuffer::testAppendString()
-{
-  int cnt = 0;
-
-  QList<QByteArray> samples = {
-    "$DIAG:HSE,0",
-    "$DIAG:RTC,0",
-    "$DIAG:ShDt,0",
+    "$DIAG:HSE,AABB",
+    "$DIAG:RTC,0,1,2,3,4,5",
+    "$DIAG:ShDt,1",
     "$DIAG:Flsh,0",
     "$DIAG:GSM,0",
     "$DIAG:SIM,8",
     "$DIAG:SMST,-1",
     "$DIAG:GPS,11",
+    "$OK",
   };
+
+  CCommandBuffer cmdBuf;
 
   for (int i = 0; i < samples.size(); i++) {
     qDebug() << "Add sample: " << samples.at(i);
-    this->buffer.appendString(samples[i]);
+    cmdBuf.append(samples[i]);
+    cmdBuf.append((char)0x00);
   }
 
-  QCOMPARE(buffer.checkLine(), CCommandBuffer::LINE_COMPELETED);
-  while (this->buffer.checkLine() == CCommandBuffer::LINE_COMPELETED) {
-   qDebug() << "Process line: " << this->buffer.getLine();
-   qDebug() << "Get param: " << this->buffer.getParamArray(0);
+  while (cmdBuf.checkLine() == CCommandBuffer::LINE_COMPELETED) {
+   qDebug() << "Process line: " << cmdBuf.getLine();
 
-   QCOMPARE(this->buffer.parse(diag), CCommandBuffer::PARSE_OK);
-   QCOMPARE(this->buffer.getLine(), samples.at(cnt));
-   cnt++;
+   if (cmdBuf.parse(descrOk) == CCommandBuffer::PARSE_OK) {
+     break;
+   }
 
-   this->buffer.releaseLine();
- }
+   if (cmdBuf.parse(diag) == CCommandBuffer::PARSE_OK) {
+    this->buffer.append(cmdBuf.getLine(), diag);
+   }
+
+   cmdBuf.releaseLine();
+ } // while
+
+  QCOMPARE(this->buffer.size(), samples.size() - 1);
+
+  int i = 0;
+  foreach (CCommandBuffer buf, this->buffer) {
+    QCOMPARE(buf.getLine(), samples.at(i++));
+  }
 
 }
 
-void CTestAnswerBuffer::testGetParam()
+void CTestAnswerBuffer::testParams()
 {
-  this->makeStrings();
+  CCommandBuffer buf;
+
+  buf = this->buffer.at(0);
+  int sample1 = 0xAABB;
+  int res1 = buf.getParamIntFromHex(1);
+  QCOMPARE(sample1, res1);
+
+  buf = this->buffer.at(1);
+  QStringList sample2 = {"0", "1", "2", "3", "4", "5"};
+  QStringList res2 = buf.getParamStringList(1);
+  QCOMPARE(sample2, res2);
+
+  buf = this->buffer.at(2);
+  QString sample3("ShDt");
+  QString res3 = buf.getParamString(0);
+  QCOMPARE(sample3, res3);
 }
+
+void CTestAnswerBuffer::testFirstLast()
+{
+  CAnswerBuffer answerBuf;
+
+  CCommandBuffer buf1 = answerBuf.first();
+  CCommandBuffer buf2 = answerBuf.last();
+}
+

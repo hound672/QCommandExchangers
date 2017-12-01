@@ -14,12 +14,11 @@ public:
 private:
   CAnswerBuffer buffer;
 
-  void makeStrings();
-  void testShowStrings(const CAnswerBuffer &answer1);
 
 private slots:
-  void testAppendString();
-  void testGetParam();
+  void testAppend();
+  void testParams();
+  void testFirstLast();
 };
 
 #endif // TESTANSWERBUFFER_H

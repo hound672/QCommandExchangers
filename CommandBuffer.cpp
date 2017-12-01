@@ -2,10 +2,10 @@
 
 #include "CommandBuffer.h"
 
-CCommandBuffer::CCommandBuffer():
+CCommandBuffer::CCommandBuffer(const QByteArray &data):
+  QByteArray(data),
   endString(0)
 {
-
 }
 
 /**
@@ -99,8 +99,6 @@ CCommandBuffer::EResultParse CCommandBuffer::parse(const CCommandBuffer::STextPa
   */
 CCommandBuffer::EResultParse CCommandBuffer::getParam(quint32 index, QByteArray &data) const
 {
-  qDebug() << "Call getParam in CCommandBuffer";
-
   if (splitData.isEmpty()) {
     return EResultParse::PARSE_ERROR_NEED_PARSE;
   }
@@ -138,15 +136,9 @@ QString CCommandBuffer::getParamString(quint32 index) const
 QStringList CCommandBuffer::getParamStringList(quint32 index) const
 {
   QStringList data;
-  int cnt = index;
 
-  while (true) {
-    QString str = this->getParamString(cnt++);
-    if (str.isEmpty()) {
-      break;
-    }
-
-    data.append(str);
+  for (quint32 i = index; i < this->splitData.size(); i++) {
+    data.append(this->getParamString(i));
   }
   return data;
 }

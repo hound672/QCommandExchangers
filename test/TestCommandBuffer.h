@@ -15,6 +15,7 @@ private:
   CCommandBuffer buffer;
 
 private slots:
+  void testContructor();
   void checkLine();
   void getLine();
   void parse();

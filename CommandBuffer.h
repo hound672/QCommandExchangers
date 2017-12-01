@@ -36,13 +36,13 @@ public:
   };
 
 public:
-  CCommandBuffer();
+  CCommandBuffer(const QByteArray &data = QByteArray());
   ELineStatus checkLine();
   QByteArray getLine() const;
   void releaseLine();
   void resetBuffer();
   EResultParse parse(const STextParsingDesc &parseDescr);
-  virtual EResultParse getParam(quint32 index, QByteArray &data) const;
+  EResultParse getParam(quint32 index, QByteArray &data) const;
   QByteArray getParamArray(quint32 index) const;
   QString getParamString(quint32 index) const;
   QStringList getParamStringList(quint32 index) const;
