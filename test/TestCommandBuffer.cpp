@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QTest>
 #include "TestCommandBuffer.h"
 
@@ -5,6 +6,7 @@ static const CCommandBuffer::STextParsingDesc descrOk = {"$OK", ','};
 static const CCommandBuffer::STextParsingDesc descrErr = {"$ERR", ','};
 static const CCommandBuffer::STextParsingDesc testCmd = {"$TEST", ','};
 static const CCommandBuffer::STextParsingDesc difSep = {"$DIFSEP", '/'};
+static const CCommandBuffer::STextParsingDesc diag = {"$DIAG", ','};
 
 
 CTestCommandBuffer::CTestCommandBuffer(QObject *parent) : QObject(parent)
@@ -73,5 +75,50 @@ void CTestCommandBuffer::testError()
   QCOMPARE(gotError, true);
   QCOMPARE(gotCmdAnswer, true);
   QCOMPARE(gotDifSep, true);
+}
+
+void CTestCommandBuffer::testClear()
+{
+  this->buffer.clear();
+  QCOMPARE(this->buffer.isEmpty(), true);
+}
+
+void CTestCommandBuffer::testDiagParse()
+{
+  this->buffer.clear();
+
+  int cnt = 0;
+
+  QList<QByteArray> samples {
+    "$DIAG:HSE,0",
+    "$DIAG:RTC,0",
+    "$DIAG:ShDt,0",
+    "$DIAG:Flsh,0",
+    "$DIAG:GSM,0",
+    "$DIAG:SIM,8",
+    "$DIAG:SMST,-1",
+    "$DIAG:GPS,11",
+    "$OK",
+  };
+
+  for (int i = 0; i < samples.size(); i++) {
+    qDebug() << "Add sample: " << samples.at(i);
+    this->buffer.append(samples[i]);
+    this->buffer.append((char)0x00);
+  }
+
+   while (this->buffer.checkLine() == CCommandBuffer::LINE_COMPELETED) {
+    qDebug() << "Process line: " << this->buffer.getLine();
+
+    if (this->buffer.parse(descrOk) == CCommandBuffer::PARSE_OK) {
+      break;
+    }
+
+    QCOMPARE(this->buffer.parse(diag), CCommandBuffer::PARSE_OK);
+    QCOMPARE(this->buffer.getLine(), samples.at(cnt));
+    cnt++;
+
+    this->buffer.releaseLine();
+  }
 }
 

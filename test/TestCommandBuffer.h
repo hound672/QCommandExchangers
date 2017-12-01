@@ -19,6 +19,8 @@ private slots:
   void getLine();
   void parse();
   void testError();
+  void testClear();
+  void testDiagParse();
 };
 
 #endif // TESTCOMMANDBUFFER_H

@@ -110,13 +110,13 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
     CCommandProcessor::SAnswerDescr *answerDescr = &(this->commandsList[0]);
     const CCommandBuffer::STextParsingDesc *descr = answerDescr->m_answerDescr;
 
-    if (descr && answerDescr->answer.isEmpty() && this->buffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
+    if (descr && this->buffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
       // ожидали ответ и получили его
       answerDescr->answer.append(this->buffer.getLine());
       answerDescr->answer.append(0x0A);
       answerDescr->answer.checkLine();
       answerDescr->answer.parse(*descr);
-      answerDescr->state ^= EStateAnswer::ST_A_WAIT_ANSWER;
+      answerDescr->state ^= (answerDescr->state & EStateAnswer::ST_A_WAIT_ANSWER);
     }
 
     if (answerDescr->m_waitResult && answerDescr->state & EStateAnswer::ST_A_WAIT_RESULT) {

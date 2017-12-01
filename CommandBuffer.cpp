@@ -35,7 +35,8 @@ CCommandBuffer::ELineStatus CCommandBuffer::checkLine()
   offset = 0;
   while (offset < sizeData &&
          QByteArray::at(offset) != 0x0D &&
-         QByteArray::at(offset) != 0x0A) {
+         QByteArray::at(offset) != 0x0A &&
+         QByteArray::at(offset) != 0x00) {
     offset++;
   }
 
