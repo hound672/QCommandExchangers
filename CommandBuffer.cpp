@@ -137,7 +137,7 @@ QStringList CCommandBuffer::getParamStringList(quint32 index) const
 {
   QStringList data;
 
-  for (quint32 i = index; i < this->splitData.size(); i++) {
+  for (quint32 i = index; i < (quint32)this->splitData.size(); i++) {
     data.append(this->getParamString(i));
   }
   return data;

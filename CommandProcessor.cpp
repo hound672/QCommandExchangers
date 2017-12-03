@@ -20,15 +20,17 @@ static const CCommandBuffer::STextParsingDesc descrErr = {"$ERR", ','};
   * @param  timeout: таймаут в мс ожидания ответа на команду
   * @retval
   */
-CCommandProcessor::SAnswerDescr::SAnswerDescr(quint32 cmdId, const CCommandBuffer::STextParsingDesc *answerDescr, bool waitResult, quint32 timeout, const CCommandBuffer::STextParsingDesc *descrOk) :
-  m_cmdId(cmdId),
-  m_answerDescr(answerDescr),
+CCommandProcessor::SAnswerDescr::SAnswerDescr(quint32 cmdId,
+                                              const CCommandBuffer::STextParsingDesc *answerDescr,
+                                              bool waitResult, quint32 timeout,
+                                              const CCommandBuffer::STextParsingDesc *descrOk) :
   m_waitResult(waitResult),
   m_timeout(timeout),
-  m_descrOk(descrOk),
   timeSend(QDateTime::currentMSecsSinceEpoch()),
-  answer(cmdId),
-  state(0)
+  state(0),
+  m_answerDescr(answerDescr),
+  m_descrOk(descrOk),
+  answer(cmdId)
 {
   if (answerDescr) state |= ST_A_WAIT_ANSWER;
   if (waitResult) state |= ST_A_WAIT_RESULT;
@@ -116,15 +118,17 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
     }
 
     if (answerDescr->m_waitResult && answerDescr->state & EStateAnswer::ST_A_WAIT_RESULT) {
-      // ожидлаем ответ о выполнении команды
+      // ожидаем ответ о выполнении команды
       const CCommandBuffer::STextParsingDesc *descrForOk;
       CCommandBuffer::EResultParse res;
 
       descrForOk = answerDescr->m_descrOk ? answerDescr->m_descrOk : &descrOk;
 
       if ((res = this->buffer.parse(*descrForOk)) == CCommandBuffer::PARSE_OK) {
+
         // получили статус выполнения, который ждали
         answerDescr->answer.setResultCode(0);
+
       } else if ((res = this->buffer.parse(descrErr)) == CCommandBuffer::PARSE_OK) {
 
         answerDescr->answer.setResultCode(this->buffer.getParamInt(0));
