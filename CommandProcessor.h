@@ -70,7 +70,6 @@ private:
   QList<SAnswerDescr> commandsList; // список ожидаемых ответов на команду
   CCommandBuffer buffer;
   void removeFirstCommand();
-  CCommandBuffer::EResultParse checkOkResult();
 
 // ************** PRIVATE **************
 

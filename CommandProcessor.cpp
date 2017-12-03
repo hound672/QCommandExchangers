@@ -66,7 +66,6 @@ void CCommandProcessor::gotFullAnswer()
   }
 
   CCommandProcessor::SAnswerDescr answerDescr = this->commandsList[0];
-//  qDebug() << "Got full answer: " << answerDescr.answer;
 
   emit this->signalGotAnswer(answerDescr.answer);
   this->removeFirstCommand();
@@ -81,17 +80,7 @@ void CCommandProcessor::removeFirstCommand()
 {
   if (!this->commandsList.isEmpty()) {
     this->commandsList.removeFirst();
-    }
-}
-
-/**
-  * @brief  Парсит переданный буффер на проверку наличия в ней положительного результаты выполнения команды
-  * @param
-  * @retval
-  */
-CCommandBuffer::EResultParse CCommandProcessor::checkOkResult()
-{
-
+  }
 }
 
 /**
