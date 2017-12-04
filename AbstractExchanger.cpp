@@ -12,10 +12,15 @@
 CAbstractExchanger::CAbstractExchanger(QObject *parent) :
   QObject(parent)
 {
-  this->commandProcessor = new CCommandProcessor();
+  this->commandProcessor = new CCommandProcessor(parent);
+  this->makeSignalSlots();
+}
 
-  connect(this->commandProcessor, SIGNAL(signalGotAnswer(const CAnswerBuffer&)),
-          this, SLOT(slotGotAnswer(const CAnswerBuffer&)));
+CAbstractExchanger::CAbstractExchanger(const CCommandProcessor::TAnswersList &answersList, QObject *parent) :
+  QObject(parent)
+{
+  this->commandProcessor = new CCommandProcessor(answersList, parent);
+  this->makeSignalSlots();
 }
 
 /**
@@ -34,6 +39,19 @@ void CAbstractExchanger::sendCommand(const QByteArray &cmdToSend, const CCommand
    ***************************************************** */
 
 // ---------------------------------------------------------------
+
+/**
+  * @brief  Создаем связки сигналов слотов
+  * @param
+  * @retval
+  */
+void CAbstractExchanger::makeSignalSlots()
+{
+  connect(this->commandProcessor, SIGNAL(signalGotAnswer(const CAnswerBuffer&)),
+          this, SLOT(slotGotAnswer(const CAnswerBuffer&)));
+}
+
+// ------------------------------------------------
 
 /* ***************** BEGIN *****************************
    ****************** PROTECTED методы ********************

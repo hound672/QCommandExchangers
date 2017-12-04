@@ -12,6 +12,7 @@ class CAbstractExchanger: public QObject
   Q_OBJECT
 public:
   CAbstractExchanger(QObject *parent = 0);
+  CAbstractExchanger(const CCommandProcessor::TAnswersList &answersList, QObject *parent = 0);
 
   virtual void connectDevice() = 0; // вирутальный метод для подключения к устройству
   virtual void sendData(const QByteArray &cmdToSend, bool waitAnswer = false) = 0; // виртуальный метод для отправки команды
@@ -21,6 +22,9 @@ public:
 
 private:
   CCommandProcessor *commandProcessor;
+
+private:
+  void makeSignalSlots();
 
 // ************** PRIVATE **************
 

@@ -46,6 +46,17 @@ CCommandProcessor::CCommandProcessor(QObject *parent) : QObject(parent)
 }
 
 /**
+  * @brief  Конструктор
+  * @param
+  * @retval
+  */
+CCommandProcessor::CCommandProcessor(const CCommandProcessor::TAnswersList &answersList, QObject *parent) :
+  CCommandProcessor(parent)
+{
+  this->unexpectedList = answersList;
+}
+
+/**
   * @brief  Добавляет в очередь ожидание ответа на команду
   * @param
   * @retval
@@ -74,6 +85,24 @@ void CCommandProcessor::gotFullAnswer()
 }
 
 /**
+  * @brief  Проверяет наличие в буфере ответа на не ожидаемую команду
+  * @param
+  * @retval
+  */
+void CCommandProcessor::checkUnexpected()
+{
+  foreach (SAnswerDescr answerDescr, this->unexpectedList) {
+    const CCommandBuffer::STextParsingDesc *descr = answerDescr.m_answerDescr;
+
+    if (descr && this->buffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
+      CAnswerBuffer answer = answerDescr.answer;
+      answer.append(this->buffer.getLine(), *descr);
+      emit this->signalGotAnswer(answer);
+    }
+  }
+}
+
+/**
   * @brief  Удаляет из списка команд первую в очереди (с проверкой наличия команд в очереди)
   * @param
   * @retval
@@ -92,20 +121,14 @@ void CCommandProcessor::removeFirstCommand()
   */
 void CCommandProcessor::slotIncomingData(const QByteArray &data)
 {
-  //if (this->commandsList.isEmpty()) {
-    // пришли данные, когда не было ожидания команды
-    // как вариант в этом случае разбирать по шаблону ассинхронных данных
-    // такие как внезапные сообщения
-    // и наверное разбирать их имеет смысл даже до определения есть ли в очереди команды
-//    qDebug() << "Got data when we do not wait it";
-//    return;
-//  }
   this->buffer.append(data); // добавляем данные в буффер
 
   while (this->buffer.checkLine() == CCommandBuffer::LINE_COMPELETED) {
 
     if (this->commandsList.isEmpty()) {
-      return;
+      this->checkUnexpected();
+      this->buffer.releaseLine();
+      continue;
     }
 
     CCommandProcessor::SAnswerDescr *answerDescr = &(this->commandsList[0]);

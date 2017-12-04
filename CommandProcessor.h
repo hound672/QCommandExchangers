@@ -51,23 +51,29 @@ public:
 
   };
 
+public:
+  typedef QList<SAnswerDescr> TAnswersList; // тип содержащий список структур SAnswerDescr
+
 // ************** PUBLIC **************
 
 public:
 
   explicit CCommandProcessor(QObject *parent = 0);
+  CCommandProcessor(const TAnswersList &answersList, QObject *parent = 0);
   void addAnswerWait(const SAnswerDescr &answerDescr);
 
 // ************** PUBLIC **************
 
 private:
   void gotFullAnswer();
+  void checkUnexpected();
+  void removeFirstCommand();
 
   static const int TIMEOUT = 100; // время интервала тика для таймера
   QTimer timer;
-  QList<SAnswerDescr> commandsList; // список ожидаемых ответов на команду
+  TAnswersList commandsList; // список ожидаемых ответов на команду
+  TAnswersList unexpectedList; // список описаний для не ожидаемых ответов
   CCommandBuffer buffer;
-  void removeFirstCommand();
 
 // ************** PRIVATE **************
 

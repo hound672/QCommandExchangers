@@ -4,12 +4,31 @@
 
 #include "TestCommandProcessor.h"
 
+static quint32 id1 = 123;
+static quint32 id2 = 456;
+static quint32 id3 = 789;
+
 CTestCommandProcessor::CTestCommandProcessor(QObject *parent) :
   QObject(parent)
 {
   qRegisterMetaType<CAnswerBuffer>();
 
-  this->cmdProcessor = new CCommandProcessor();
+  static CCommandBuffer::STextParsingDesc d1 = {"+NOT", ','};
+  static CCommandBuffer::STextParsingDesc d2 = {"+HI", ','};
+  static CCommandBuffer::STextParsingDesc d3 = {"+BYE", ','};
+
+  CCommandProcessor::TAnswersList answersList;
+  answersList.append(
+          CCommandProcessor::SAnswerDescr(id1, &d1)
+         );
+  answersList.append(
+          CCommandProcessor::SAnswerDescr(id2, &d2)
+        );
+  answersList.append(
+          CCommandProcessor::SAnswerDescr(id3, &d3)
+        );
+
+  this->cmdProcessor = new CCommandProcessor(answersList);
   this->spyGotAnswer = new QSignalSpy(this->cmdProcessor, SIGNAL(signalGotAnswer(const CAnswerBuffer&)));
 }
 
@@ -227,7 +246,7 @@ void CTestCommandProcessor::testDifResult()
           CCommandProcessor::SAnswerDescr(idTest, NULL, true, 1000, &descrOk)
         );
 
-  this->cmdProcessor->slotIncomingData("SOME_SHIT\r\nAGAIN\r\nOK!\r\n");
+  this->cmdProcessor->slotIncomingData("SOME_SHIT\r\nOK!\r\n");
   spyGotAnswer->wait(2000);
   QCOMPARE(spyGotAnswer->count(), 1);
 
@@ -235,6 +254,31 @@ void CTestCommandProcessor::testDifResult()
   QCOMPARE(answer.getResultStatus(), CAnswerBuffer::RS_OK);
   QCOMPARE(answer.getResultCode(), (quint32)0);
   QCOMPARE(answer.getCmdId(), idTest);
+  this->spyGotAnswer->clear();
+}
+
+/**
+  * @brief  Тест для получения не ожидаемого ответа
+  * @param
+  * @retval
+  */
+void CTestCommandProcessor::testUnexpected()
+{
+  quint32 idTest = id3;
+
+  this->cmdProcessor->slotIncomingData("SOME_SHIT\r\nAGAIN\r\n+BYE:32,44\r\n");
+
+  spyGotAnswer->wait(2000);
+  QCOMPARE(spyGotAnswer->count(), 1);
+  CAnswerBuffer answer = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
+  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::RS_OK);
+  QCOMPARE(answer.getResultCode(), (quint32)0);
+  QCOMPARE(answer.getCmdId(), idTest);
+
+  CCommandBuffer answerString = answer.first();
+  QCOMPARE(answerString.getParamInt(0), 32);
+  QCOMPARE(answerString.getParamInt(1), 44);
+
   this->spyGotAnswer->clear();
 }
 
