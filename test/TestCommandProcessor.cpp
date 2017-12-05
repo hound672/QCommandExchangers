@@ -28,7 +28,7 @@ CTestCommandProcessor::CTestCommandProcessor(QObject *parent) :
           CCommandProcessor::SAnswerDescr(id3, &d3)
         );
 
-  this->cmdProcessor = new CCommandProcessor(answersList);
+  this->cmdProcessor = new CCommandProcessor(&answersList);
   this->spyGotAnswer = new QSignalSpy(this->cmdProcessor, SIGNAL(signalGotAnswer(const CAnswerBuffer&)));
 }
 
@@ -278,6 +278,55 @@ void CTestCommandProcessor::testUnexpected()
   CCommandBuffer answerString = answer.first();
   QCOMPARE(answerString.getParamInt(0), 32);
   QCOMPARE(answerString.getParamInt(1), 44);
+
+  this->spyGotAnswer->clear();
+}
+
+/**
+  * @brief  Тест на обработку последовательно отправленных команд
+  * @param
+  * @retval
+  */
+void CTestCommandProcessor::testManyCommands()
+{
+  quint32 idTest1 = 111;
+  quint32 idTest2 = 222;
+
+  // Проверяем получение ответа об успешном выполнении команды
+  static CCommandBuffer::STextParsingDesc descr1 = {"+RESP", ','};
+  static CCommandBuffer::STextParsingDesc descr2 = {"+HI", ','};
+  this->cmdProcessor->addAnswerWait(
+          CCommandProcessor::SAnswerDescr(idTest1, &descr1, false, 5000)
+        );
+  this->cmdProcessor->addAnswerWait(
+          CCommandProcessor::SAnswerDescr(idTest2, &descr2, true, 5000)
+        );
+
+  this->cmdProcessor->slotIncomingData("SOME_SHIT\r\n+RESP:1,2,3\r\nAGAIN_TRASH");
+  spyGotAnswer->wait(2000);
+  QCOMPARE(spyGotAnswer->count(), 1);
+  QCOMPARE(this->cmdProcessor->isEmpty(), false);
+
+  this->cmdProcessor->slotIncomingData("AGAIN_TRASH\r\n+HI:HELLO\r\n$OK\r\n");
+  spyGotAnswer->wait(2000);
+  QCOMPARE(spyGotAnswer->count(), 2);
+
+  CAnswerBuffer answer1 = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
+  CAnswerBuffer answer2 = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(1).at(0));
+  QCOMPARE(answer1.getResultStatus(), CAnswerBuffer::RS_OK);
+  QCOMPARE(answer1.getResultCode(), (quint32)0);
+  QCOMPARE(answer1.getCmdId(), idTest1);
+  QCOMPARE(answer1.size(), 1);
+  QCOMPARE(answer1.at(0).getParamString(0), QString("1"));
+  QCOMPARE(answer1.at(0).getParamInt(1), 2);
+
+  QCOMPARE(answer2.getResultStatus(), CAnswerBuffer::RS_OK);
+  QCOMPARE(answer2.getResultCode(), (quint32)0);
+  QCOMPARE(answer2.getCmdId(), idTest2);
+  QCOMPARE(answer2.size(), 1);
+  QCOMPARE(answer2.at(0).getParamString(0), QString("HELLO"));
+
+  QCOMPARE(this->cmdProcessor->isEmpty(), true);
 
   this->spyGotAnswer->clear();
 }

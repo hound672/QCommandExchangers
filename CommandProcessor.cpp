@@ -24,36 +24,29 @@ CCommandProcessor::SAnswerDescr::SAnswerDescr(quint32 cmdId,
                                               const CCommandBuffer::STextParsingDesc *answerDescr,
                                               bool waitResult, quint32 timeout,
                                               const CCommandBuffer::STextParsingDesc *descrOk) :
-  m_waitResult(waitResult),
-  m_timeout(timeout),
-  timeSend(QDateTime::currentMSecsSinceEpoch()),
-  state(0),
-  m_answerDescr(answerDescr),
-  m_descrOk(descrOk),
-  answer(cmdId)
+  mWaitResult(waitResult),
+  mTimeout(timeout),
+  mTimeSend(QDateTime::currentMSecsSinceEpoch()),
+  mState(0),
+  mAnswerDescr(answerDescr),
+  mDescrOk(descrOk),
+  mAnswer(cmdId)
 {
-  if (answerDescr) state |= ST_A_WAIT_ANSWER;
-  if (waitResult) state |= ST_A_WAIT_RESULT;
+  if (answerDescr) mState |= ST_A_WAIT_ANSWER;
+  if (waitResult) mState |= ST_A_WAIT_RESULT;
 }
 
 
-CCommandProcessor::CCommandProcessor(QObject *parent) : QObject(parent)
+CCommandProcessor::CCommandProcessor(TAnswersList *unexpectedAnswers, QObject *parent) : QObject(parent)
 {
-  connect(&(this->timer), SIGNAL(timeout()),
+  connect(&mTimer, SIGNAL(timeout()),
           this, SLOT(slotTimeout()));
 
-  this->timer.start(CCommandProcessor::TIMEOUT);
-}
+  if (unexpectedAnswers) {
+    mUnexpectedList = *unexpectedAnswers;
+  }
 
-/**
-  * @brief  Конструктор
-  * @param
-  * @retval
-  */
-CCommandProcessor::CCommandProcessor(const CCommandProcessor::TAnswersList &answersList, QObject *parent) :
-  CCommandProcessor(parent)
-{
-  this->unexpectedList = answersList;
+  mTimer.start(CCommandProcessor::TIMEOUT);
 }
 
 /**
@@ -63,7 +56,17 @@ CCommandProcessor::CCommandProcessor(const CCommandProcessor::TAnswersList &answ
   */
 void CCommandProcessor::addAnswerWait(const CCommandProcessor::SAnswerDescr &answerDescr)
 {
-  this->commandsList.append(answerDescr);
+  this->mCommandsList.append(answerDescr);
+}
+
+/**
+  * @brief  Возвращает true если список на очедеь ожидания ответов на команду пустой
+  * @param
+  * @retval true: если больше не ждем ответов на команду
+  */
+bool CCommandProcessor::isEmpty()
+{
+  return mCommandsList.isEmpty();
 }
 
 /**
@@ -73,15 +76,15 @@ void CCommandProcessor::addAnswerWait(const CCommandProcessor::SAnswerDescr &ans
   */
 void CCommandProcessor::gotFullAnswer()
 {
-  if (this->commandsList.isEmpty()) {
+  if (this->mCommandsList.isEmpty()) {
     qDebug() << "Call gotFullAnswer when commandsList is empty!";
     return;
   }
 
-  CCommandProcessor::SAnswerDescr answerDescr = this->commandsList[0];
+  CAnswerBuffer answer = mCommandsList.first().mAnswer;
 
-  emit this->signalGotAnswer(answerDescr.answer);
   this->removeFirstCommand();
+  emit this->signalGotAnswer(answer);
 }
 
 /**
@@ -91,12 +94,12 @@ void CCommandProcessor::gotFullAnswer()
   */
 void CCommandProcessor::checkUnexpected()
 {
-  foreach (SAnswerDescr answerDescr, this->unexpectedList) {
-    const CCommandBuffer::STextParsingDesc *descr = answerDescr.m_answerDescr;
+  foreach (SAnswerDescr answerDescr, this->mUnexpectedList) {
+    const CCommandBuffer::STextParsingDesc *descr = answerDescr.mAnswerDescr;
 
-    if (descr && this->buffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
-      CAnswerBuffer answer = answerDescr.answer;
-      answer.append(this->buffer.getLine(), *descr);
+    if (descr && this->mBuffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
+      CAnswerBuffer answer = answerDescr.mAnswer;
+      answer.append(this->mBuffer.getLine(), *descr);
       emit this->signalGotAnswer(answer);
     }
   }
@@ -109,8 +112,8 @@ void CCommandProcessor::checkUnexpected()
   */
 void CCommandProcessor::removeFirstCommand()
 {
-  if (!this->commandsList.isEmpty()) {
-    this->commandsList.removeFirst();
+  if (!this->mCommandsList.isEmpty()) {
+    this->mCommandsList.removeFirst();
   }
 }
 
@@ -121,72 +124,72 @@ void CCommandProcessor::removeFirstCommand()
   */
 void CCommandProcessor::slotIncomingData(const QByteArray &data)
 {
-  this->buffer.append(data); // добавляем данные в буффер
+  this->mBuffer.append(data); // добавляем данные в буффер
 
-  while (this->buffer.checkLine() == CCommandBuffer::LINE_COMPELETED) {
+  while (this->mBuffer.checkLine() == CCommandBuffer::LINE_COMPELETED) {
 
-    if (this->commandsList.isEmpty()) {
+    if (this->mCommandsList.isEmpty()) {
       this->checkUnexpected();
-      this->buffer.releaseLine();
+      this->mBuffer.releaseLine();
       continue;
     }
 
-    CCommandProcessor::SAnswerDescr *answerDescr = &(this->commandsList[0]);
-    const CCommandBuffer::STextParsingDesc *descr = answerDescr->m_answerDescr;
+    CCommandProcessor::SAnswerDescr *answerDescr = &(this->mCommandsList[0]);
+    const CCommandBuffer::STextParsingDesc *descr = answerDescr->mAnswerDescr;
 
-    if (descr && this->buffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
+    if (descr && this->mBuffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
       // ожидали ответ и получили его
-      answerDescr->answer.append(this->buffer.getLine(), *descr);
-      answerDescr->state ^= (answerDescr->state & EStateAnswer::ST_A_WAIT_ANSWER);
+      answerDescr->mAnswer.append(this->mBuffer.getLine(), *descr);
+      answerDescr->mState ^= (answerDescr->mState & EStateAnswer::ST_A_WAIT_ANSWER);
     }
 
-    if (answerDescr->m_waitResult && answerDescr->state & EStateAnswer::ST_A_WAIT_RESULT) {
+    if (answerDescr->mWaitResult && answerDescr->mState & EStateAnswer::ST_A_WAIT_RESULT) {
       // ожидаем ответ о выполнении команды
       const CCommandBuffer::STextParsingDesc *descrForOk;
       CCommandBuffer::EResultParse res;
 
-      descrForOk = answerDescr->m_descrOk ? answerDescr->m_descrOk : &descrOk;
+      descrForOk = answerDescr->mDescrOk ? answerDescr->mDescrOk : &descrOk;
 
-      if ((res = this->buffer.parse(*descrForOk)) == CCommandBuffer::PARSE_OK) {
+      if ((res = this->mBuffer.parse(*descrForOk)) == CCommandBuffer::PARSE_OK) {
 
         // получили статус выполнения, который ждали
-        answerDescr->answer.setResultCode(0);
+        answerDescr->mAnswer.setResultCode(0);
 
-      } else if ((res = this->buffer.parse(descrErr)) == CCommandBuffer::PARSE_OK) {
+      } else if ((res = this->mBuffer.parse(descrErr)) == CCommandBuffer::PARSE_OK) {
 
-        answerDescr->answer.setResultCode(this->buffer.getParamInt(0));
-        answerDescr->answer.setResultStatus(CAnswerBuffer::EResultStatus::RS_ERROR);
+        answerDescr->mAnswer.setResultCode(this->mBuffer.getParamInt(0));
+        answerDescr->mAnswer.setResultStatus(CAnswerBuffer::EResultStatus::RS_ERROR);
 
       }
 
       if (res == CCommandBuffer::PARSE_OK) {
-        answerDescr->state ^= EStateAnswer::ST_A_WAIT_RESULT;
+        answerDescr->mState ^= EStateAnswer::ST_A_WAIT_RESULT;
       }
     }
 
-    if (answerDescr->state == EStateAnswer::ST_A_DONE) {
+    if (answerDescr->mState == EStateAnswer::ST_A_DONE) {
       this->gotFullAnswer();
     }
 
-    this->buffer.releaseLine();
+    this->mBuffer.releaseLine();
 
   } // while
 }
 
 void CCommandProcessor::slotTimeout()
 {
-  if (this->commandsList.isEmpty()) {
+  if (this->mCommandsList.isEmpty()) {
     // список команд пуст, нечего ожидать
     return;
   }
 
   // если истек таймаут ожидания ответа на команду, сбрасываем буффер и удалчяем эту команду из списка
-  CCommandProcessor::SAnswerDescr *answerDescr = &(this->commandsList[0]);
+  CCommandProcessor::SAnswerDescr *answerDescr = &(this->mCommandsList[0]);
   quint32 currentTime = QDateTime::currentMSecsSinceEpoch();
 
-  if (answerDescr->m_timeout + answerDescr->timeSend < currentTime) {
-    answerDescr->answer.setResultStatus(CAnswerBuffer::EResultStatus::RS_TIMEOUT);
-    qDebug() << "Error timeout: " << answerDescr->answer.getResultStatus();
+  if (answerDescr->mTimeout + answerDescr->mTimeSend < currentTime) {
+    answerDescr->mAnswer.setResultStatus(CAnswerBuffer::EResultStatus::RS_TIMEOUT);
+    qDebug() << "Error timeout: " << answerDescr->mAnswer.getResultStatus();
     this->gotFullAnswer();
   }
 }

@@ -33,17 +33,17 @@ public:
    *  Таймаут ее ожидания, ожидание статуса выполнения и т.п
    *********************************************/
   struct SAnswerDescr {
-    bool m_waitResult; // флаг ожидания результата выполнения команды (обычно OK/ERROR после текста ответа)
+    bool mWaitResult; // флаг ожидания результата выполнения команды (обычно OK/ERROR после текста ответа)
 
-    quint32 m_timeout; // таумайт для ожидания выполнения команды
-    quint32 timeSend; // время когда была отправленна команда
-    quint8 state;
+    quint32 mTimeout; // таумайт для ожидания выполнения команды
+    quint32 mTimeSend; // время когда была отправленна команда
+    quint8 mState;
 
-    const CCommandBuffer::STextParsingDesc *m_answerDescr; // описание для парсинга ответа команды,
+    const CCommandBuffer::STextParsingDesc *mAnswerDescr; // описание для парсинга ответа команды,
                                                            // если NULL то ответа не ожидаем
-    const CCommandBuffer::STextParsingDesc *m_descrOk;     // описание для парсинга результата выполнения команды
+    const CCommandBuffer::STextParsingDesc *mDescrOk;     // описание для парсинга результата выполнения команды
                                                            // если NULL то используем стандартное
-    CAnswerBuffer answer; // буфер под ответ на команду
+    CAnswerBuffer mAnswer; // буфер под ответ на команду
 
     SAnswerDescr(quint32 cmdId, const CCommandBuffer::STextParsingDesc *answerDescr = NULL,
                  bool waitResult = false, quint32 timeout = 1000,
@@ -58,9 +58,9 @@ public:
 
 public:
 
-  explicit CCommandProcessor(QObject *parent = 0);
-  CCommandProcessor(const TAnswersList &answersList, QObject *parent = 0);
+  explicit CCommandProcessor(TAnswersList *unexpectedAnswers, QObject *parent = 0);
   void addAnswerWait(const SAnswerDescr &answerDescr);
+  bool isEmpty();
 
 // ************** PUBLIC **************
 
@@ -70,10 +70,10 @@ private:
   void removeFirstCommand();
 
   static const int TIMEOUT = 100; // время интервала тика для таймера
-  QTimer timer;
-  TAnswersList commandsList; // список ожидаемых ответов на команду
-  TAnswersList unexpectedList; // список описаний для не ожидаемых ответов
-  CCommandBuffer buffer;
+  QTimer mTimer;
+  TAnswersList mCommandsList; // список ожидаемых ответов на команду
+  TAnswersList mUnexpectedList; // список описаний для не ожидаемых ответов
+  CCommandBuffer mBuffer;
 
 // ************** PRIVATE **************
 

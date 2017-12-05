@@ -31,8 +31,8 @@ public:
    *********************************************/
   struct STextParsingDesc
   {
-    QByteArray m_prefix; // префикс команды
-    char m_separator; // разделитель параметров команды
+    QByteArray mPrefix; // префикс команды
+    char mSeparator; // разделитель параметров команды
   };
 
 public:

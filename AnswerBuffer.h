@@ -17,24 +17,24 @@ public:
   };
 
 public:
-  CAnswerBuffer(qint32 cmdId = 0);
+  CAnswerBuffer(qint32 mCmdId = 0);
   void append(const QByteArray &dataToAdd, const CCommandBuffer::STextParsingDesc &parseDescr);
   CCommandBuffer first() const;
   CCommandBuffer last() const;
 
-  void setCmdId(quint32 cmdId) {this->cmdId = cmdId;}
-  quint32 getCmdId() const {return this->cmdId;}
+  void setCmdId(quint32 cmdId) {mCmdId = cmdId;}
+  quint32 getCmdId() const {return mCmdId;}
 
-  void setResultCode(quint32 resultStatus) {this->resultCode = resultStatus;}
-  quint32 getResultCode() const {return this->resultCode;}
+  void setResultCode(quint32 resultStatus) {mResultCode = resultStatus;}
+  quint32 getResultCode() const {return mResultCode;}
 
-  void setResultStatus(EResultStatus state) {this->resultStatus = state;}
-  EResultStatus getResultStatus() const {return this->resultStatus;}
+  void setResultStatus(EResultStatus state) {mResultStatus = state;}
+  EResultStatus getResultStatus() const {return mResultStatus;}
 
 private:
-  quint32 cmdId; // идентификатор команды
-  quint32 resultCode; // код результата выполнения команды
-  EResultStatus resultStatus; // Состояние выполнения команды
+  quint32 mCmdId; // идентификатор команды
+  quint32 mResultCode; // код результата выполнения команды
+  EResultStatus mResultStatus; // Состояние выполнения команды
 };
 
 #endif // ANSWERBUFFER_H

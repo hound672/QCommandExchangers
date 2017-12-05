@@ -27,6 +27,7 @@ private slots:
   void testManyString();
   void testDifResult();
   void testUnexpected();
+  void testManyCommands();
 };
 
 #endif // TESTCOMMANDPROCESSOR_H

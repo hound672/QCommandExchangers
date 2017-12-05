@@ -9,17 +9,10 @@
    ****************** PUBLIC методы ********************
    ***************************************************** */
 
-CAbstractExchanger::CAbstractExchanger(QObject *parent) :
+CAbstractExchanger::CAbstractExchanger(CCommandProcessor::TAnswersList *unexpectedAnswers, QObject *parent) :
   QObject(parent)
 {
-  this->commandProcessor = new CCommandProcessor(parent);
-  this->makeSignalSlots();
-}
-
-CAbstractExchanger::CAbstractExchanger(const CCommandProcessor::TAnswersList &answersList, QObject *parent) :
-  QObject(parent)
-{
-  this->commandProcessor = new CCommandProcessor(answersList, parent);
+  this->mCommandProcessor = new CCommandProcessor(unexpectedAnswers, parent);
   this->makeSignalSlots();
 }
 
@@ -31,7 +24,17 @@ CAbstractExchanger::CAbstractExchanger(const CCommandProcessor::TAnswersList &an
 void CAbstractExchanger::sendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr)
 {
   this->sendData(cmdToSend, false);
-  this->commandProcessor->addAnswerWait(answerDescr);
+  this->mCommandProcessor->addAnswerWait(answerDescr);
+}
+
+/**
+  * @brief  Возвращает true если список на очедеь ожидания ответов на команду пустой
+  * @param
+  * @retval
+  */
+bool CAbstractExchanger::isAnswersListEmpty()
+{
+  return mCommandProcessor->isEmpty();
 }
 
 /* ******************* END *****************************
@@ -47,7 +50,7 @@ void CAbstractExchanger::sendCommand(const QByteArray &cmdToSend, const CCommand
   */
 void CAbstractExchanger::makeSignalSlots()
 {
-  connect(this->commandProcessor, SIGNAL(signalGotAnswer(const CAnswerBuffer&)),
+  connect(this->mCommandProcessor, SIGNAL(signalGotAnswer(const CAnswerBuffer&)),
           this, SLOT(slotGotAnswer(const CAnswerBuffer&)));
 }
 
@@ -64,7 +67,7 @@ void CAbstractExchanger::makeSignalSlots()
   */
 void CAbstractExchanger::gotIncomingData(const QByteArray &answer)
 {
-  this->commandProcessor->slotIncomingData(answer);
+  this->mCommandProcessor->slotIncomingData(answer);
   emit this->signalGotRawData(answer);
 }
 

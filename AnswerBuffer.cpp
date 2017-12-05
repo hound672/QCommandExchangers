@@ -3,9 +3,9 @@
 #include "AnswerBuffer.h"
 
 CAnswerBuffer::CAnswerBuffer(qint32 cmdId) :
-  cmdId(cmdId),
-  resultCode(0),
-  resultStatus(EResultStatus::RS_OK)
+  mCmdId(cmdId),
+  mResultCode(0),
+  mResultStatus(EResultStatus::RS_OK)
 {
 }
 

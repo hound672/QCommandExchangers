@@ -85,7 +85,7 @@ void CCommandBuffer::resetBuffer()
   */
 CCommandBuffer::EResultParse CCommandBuffer::parse(const CCommandBuffer::STextParsingDesc &parseDescr)
 {
-  if (!this->getLine().startsWith(parseDescr.m_prefix)) {
+  if (!this->getLine().startsWith(parseDescr.mPrefix)) {
     return EResultParse::PARSE_ERROR_PREFIX;
   }
   this->splitData = this->splitParams(parseDescr);
@@ -190,8 +190,8 @@ QByteArray CCommandBuffer::getParam(const QList<QByteArray> list, quint32 index)
   */
 QList<QByteArray> CCommandBuffer::splitParams(const CCommandBuffer::STextParsingDesc &parseDescr) const
 {
-  char separator = parseDescr.m_separator;
-  int pos = parseDescr.m_prefix.size() + 1;
+  char separator = parseDescr.mSeparator;
+  int pos = parseDescr.mPrefix.size() + 1;
   QByteArray tmpData = this->getLine().mid(pos);
   return tmpData.split(separator);
 }
