@@ -128,6 +128,11 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
 
   while (this->mBuffer.checkLine() == CCommandBuffer::LINE_COMPELETED) {
 
+    if (mBuffer.getLine().isEmpty()) {
+      mBuffer.releaseLine();
+      continue;
+    }
+
     if (this->mCommandsList.isEmpty()) {
       this->checkUnexpected();
       this->mBuffer.releaseLine();
