@@ -35,8 +35,7 @@ public:
   struct SAnswerDescr {
     bool mWaitResult; // флаг ожидания результата выполнения команды (обычно OK/ERROR после текста ответа)
 
-    quint32 mTimeout; // таумайт для ожидания выполнения команды
-    quint32 mTimeSend; // время когда была отправленна команда
+    quint64 mTimeout; // таумайт для ожидания выполнения команды
     quint8 mState;
 
     const CCommandBuffer::STextParsingDesc *mAnswerDescr; // описание для парсинга ответа команды,
@@ -61,6 +60,7 @@ public:
   explicit CCommandProcessor(TAnswersList *unexpectedAnswers, QObject *parent = 0);
   void addAnswerWait(const SAnswerDescr &answerDescr);
   bool isEmpty();
+  void clear();
 
 // ************** PUBLIC **************
 

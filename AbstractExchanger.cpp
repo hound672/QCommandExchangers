@@ -37,6 +37,11 @@ bool CAbstractExchanger::isAnswersListEmpty()
   return mCommandProcessor->isEmpty();
 }
 
+void CAbstractExchanger::clear()
+{
+  mCommandProcessor->clear();
+}
+
 /* ******************* END *****************************
    ****************** PUBLIC методы ********************
    ***************************************************** */

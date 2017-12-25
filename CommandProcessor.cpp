@@ -25,13 +25,15 @@ CCommandProcessor::SAnswerDescr::SAnswerDescr(quint32 cmdId,
                                               bool waitResult, quint32 timeout,
                                               const CCommandBuffer::STextParsingDesc *descrOk) :
   mWaitResult(waitResult),
-  mTimeout(timeout),
-  mTimeSend(QDateTime::currentMSecsSinceEpoch()),
+  mTimeout(QDateTime::currentMSecsSinceEpoch() + timeout),
   mState(0),
   mAnswerDescr(answerDescr),
   mDescrOk(descrOk),
   mAnswer(cmdId)
 {
+  if (cmdId == 222) {
+      qDebug() << "Timeout: " << mTimeout;
+    }
   if (answerDescr) mState |= ST_A_WAIT_ANSWER;
   if (waitResult) mState |= ST_A_WAIT_RESULT;
 }
@@ -67,6 +69,11 @@ void CCommandProcessor::addAnswerWait(const CCommandProcessor::SAnswerDescr &ans
 bool CCommandProcessor::isEmpty()
 {
   return mCommandsList.isEmpty();
+}
+
+void CCommandProcessor::clear()
+{
+  mBuffer.clear();
 }
 
 /**
@@ -133,8 +140,9 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
       continue;
     }
 
+    this->checkUnexpected();
+
     if (this->mCommandsList.isEmpty()) {
-      this->checkUnexpected();
       this->mBuffer.releaseLine();
       continue;
     }
@@ -190,11 +198,11 @@ void CCommandProcessor::slotTimeout()
 
   // если истек таймаут ожидания ответа на команду, сбрасываем буффер и удалчяем эту команду из списка
   CCommandProcessor::SAnswerDescr *answerDescr = &(this->mCommandsList[0]);
-  quint32 currentTime = QDateTime::currentMSecsSinceEpoch();
+  quint64 currentTime = QDateTime::currentMSecsSinceEpoch();
 
-  if (answerDescr->mTimeout + answerDescr->mTimeSend < currentTime) {
+  if (answerDescr->mTimeout < currentTime) {
     answerDescr->mAnswer.setResultStatus(CAnswerBuffer::EResultStatus::RS_TIMEOUT);
-    qDebug() << "Error timeout: " << answerDescr->mAnswer.getResultStatus();
+    qDebug() << "Error timeout: " << answerDescr->mAnswer.getCmdId();
     this->gotFullAnswer();
   }
 }

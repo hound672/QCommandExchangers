@@ -17,6 +17,7 @@ public:
   virtual void sendData(const QByteArray &cmdToSend, bool waitAnswer = false) = 0; // виртуальный метод для отправки команды
   void sendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr);
   bool isAnswersListEmpty();
+  void clear();
 
 // ************** PUBLIC **************
 
