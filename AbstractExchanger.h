@@ -43,7 +43,7 @@ signals:
 // ************** SIGNALS **************
 
 private slots:
-  void slotGotAnswer(const CAnswerBuffer &answer);
+  virtual void slotGotAnswer(const CAnswerBuffer &answer);
 };
 
 #endif // ABSTRACTEXCHANGER_H
