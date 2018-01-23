@@ -44,6 +44,7 @@ public:
                                                            // если NULL то используем стандартное
     CAnswerBuffer mAnswer; // буфер под ответ на команду
 
+    SAnswerDescr() {}
     SAnswerDescr(quint32 cmdId, const CCommandBuffer::STextParsingDesc *answerDescr = NULL,
                  bool waitResult = false, quint32 timeout = 1000,
                  const CCommandBuffer::STextParsingDesc *descrOk = NULL);
