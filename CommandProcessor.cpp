@@ -39,8 +39,15 @@ CCommandProcessor::SAnswerDescr::SAnswerDescr(quint32 cmdId,
 }
 
 
-CCommandProcessor::CCommandProcessor(TAnswersList *unexpectedAnswers, bool useTimer, QObject *parent) :
-  QObject(parent)
+/**
+  * @brief
+  * @param  onlyIn: при true работает только для входищих команд
+  *                 не включает таймер и генерирует ошибку, если команды не было в списке не ожидаемых команд
+  * @retval
+  */
+CCommandProcessor::CCommandProcessor(const TAnswersList *unexpectedAnswers, bool onlyIn, QObject *parent) :
+  QObject(parent),
+  mOnlyIn(onlyIn)
 {
   connect(&mTimer, SIGNAL(timeout()),
           this, SLOT(slotTimeout()));
@@ -49,7 +56,7 @@ CCommandProcessor::CCommandProcessor(TAnswersList *unexpectedAnswers, bool useTi
     mUnexpectedList = *unexpectedAnswers;
   }
 
-  if (useTimer) {
+  if (!onlyIn) {
     mTimer.start(CCommandProcessor::TIMEOUT);
   }
 }
@@ -111,7 +118,13 @@ void CCommandProcessor::checkUnexpected()
       CAnswerBuffer answer = answerDescr.mAnswer;
       answer.append(this->mBuffer.getLine(), *descr);
       emit this->signalGotAnswer(answer);
+      return;
     }
+  }
+
+  if (mOnlyIn) {
+    // команда не была найдена в списке не ожидаемых и режим работы только входящие команды
+    emit this->signalUnknownCmd();
   }
 }
 

@@ -58,7 +58,7 @@ public:
 
 public:
 
-  explicit CCommandProcessor(TAnswersList *unexpectedAnswers, bool useTimer = true, QObject *parent = 0);
+  explicit CCommandProcessor(const TAnswersList *unexpectedAnswers, bool onlyIn = false, QObject *parent = 0);
   void addAnswerWait(const SAnswerDescr &answerDescr);
   bool isEmpty();
   void clear();
@@ -71,6 +71,7 @@ private:
   void removeFirstCommand();
 
   static const int TIMEOUT = 100; // время интервала тика для таймера
+  bool mOnlyIn;
   QTimer mTimer;
   TAnswersList mCommandsList; // список ожидаемых ответов на команду
   TAnswersList mUnexpectedList; // список описаний для не ожидаемых ответов
@@ -80,6 +81,7 @@ private:
 
 signals:
   void signalGotAnswer(const CAnswerBuffer &answerBuffer); // Сигнал о получении ответа на команду
+  void signalUnknownCmd();
 
 // ************** SIGNALS **************
 
