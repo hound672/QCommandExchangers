@@ -58,7 +58,7 @@ public:
 
 public:
 
-  explicit CCommandProcessor(TAnswersList *unexpectedAnswers, QObject *parent = 0);
+  explicit CCommandProcessor(TAnswersList *unexpectedAnswers, bool useTimer = true, QObject *parent = 0);
   void addAnswerWait(const SAnswerDescr &answerDescr);
   bool isEmpty();
   void clear();

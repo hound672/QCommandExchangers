@@ -39,7 +39,8 @@ CCommandProcessor::SAnswerDescr::SAnswerDescr(quint32 cmdId,
 }
 
 
-CCommandProcessor::CCommandProcessor(TAnswersList *unexpectedAnswers, QObject *parent) : QObject(parent)
+CCommandProcessor::CCommandProcessor(TAnswersList *unexpectedAnswers, bool useTimer, QObject *parent) :
+  QObject(parent)
 {
   connect(&mTimer, SIGNAL(timeout()),
           this, SLOT(slotTimeout()));
@@ -48,7 +49,9 @@ CCommandProcessor::CCommandProcessor(TAnswersList *unexpectedAnswers, QObject *p
     mUnexpectedList = *unexpectedAnswers;
   }
 
-  mTimer.start(CCommandProcessor::TIMEOUT);
+  if (useTimer) {
+    mTimer.start(CCommandProcessor::TIMEOUT);
+  }
 }
 
 /**
