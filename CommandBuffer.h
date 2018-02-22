@@ -45,6 +45,7 @@ public:
   EResultParse getParam(quint32 index, QByteArray &data) const;
   QByteArray getParamArray(quint32 index) const;
   QString getParamString(quint32 index) const;
+  QString getStringFromHeader() const;
   QStringList getParamStringList(quint32 index) const;
   int getParamInt(quint32 index) const;
   int getParamIntFromHex(quint32 index) const;
@@ -53,6 +54,7 @@ protected:
   QByteArray getParam(const QList<QByteArray> list, quint32 index) const;
   QList<QByteArray> splitParams(const STextParsingDesc &parseDescr) const;
   QList<QByteArray> splitData; // данные после метода parse разделенные согласно переданому ранее сепаратору
+  quint32 mStartPayload; // индекс начала данных после заголовка
   quint32 endString; // индекс окончания строки
 
 };

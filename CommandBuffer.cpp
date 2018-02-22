@@ -89,6 +89,7 @@ CCommandBuffer::EResultParse CCommandBuffer::parse(const CCommandBuffer::STextPa
     return EResultParse::PARSE_ERROR_PREFIX;
   }
   this->splitData = this->splitParams(parseDescr);
+  mStartPayload = parseDescr.mPrefix.size() + 1; // +1 для разделителя
   return EResultParse::PARSE_OK;
 }
 
@@ -126,6 +127,16 @@ QString CCommandBuffer::getParamString(quint32 index) const
   this->getParam(index, value);
 
   return QString::fromUtf8(value);
+}
+
+/**
+  * @brief  Возвращает всю строку кроме заголовка описанного в prefix header
+  * @param
+  * @retval
+  */
+QString CCommandBuffer::getStringFromHeader() const
+{
+  return QString(QByteArray::mid(mStartPayload, QByteArray::size()));
 }
 
 /**
