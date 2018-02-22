@@ -13,7 +13,7 @@ class CAbstractExchanger: public QObject
 public:
   CAbstractExchanger(CCommandProcessor::TAnswersList *unexpectedAnswers, QObject *parent = 0);
 
-  virtual void connectDevice(int params) = 0; // вирутальный метод для подключения к устройству
+  virtual void connectDevice(int params, const QString &param2) = 0; // вирутальный метод для подключения к устройству
   virtual void sendData(const QByteArray &cmdToSend) = 0; // виртуальный метод для отправки команды
   virtual void sendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr);
   bool isAnswersListEmpty();
