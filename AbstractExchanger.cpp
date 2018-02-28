@@ -12,7 +12,7 @@
 CAbstractExchanger::CAbstractExchanger(CCommandProcessor::TAnswersList *unexpectedAnswers, QObject *parent) :
   QObject(parent)
 {
-  this->mCommandProcessor = new CCommandProcessor(unexpectedAnswers, parent);
+  this->mCommandProcessor = new CCommandProcessor(unexpectedAnswers, false, parent);
   this->makeSignalSlots();
 }
 
