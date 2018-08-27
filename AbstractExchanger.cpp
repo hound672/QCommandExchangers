@@ -23,7 +23,7 @@ CAbstractExchanger::CAbstractExchanger(CCommandProcessor::TAnswersList *unexpect
   */
 void CAbstractExchanger::sendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr)
 {
-  this->sendData(cmdToSend);
+  this->sendData(cmdToSend, false);
   this->mCommandProcessor->addAnswerWait(answerDescr);
 }
 

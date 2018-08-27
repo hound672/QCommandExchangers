@@ -159,12 +159,12 @@ QStringList CCommandBuffer::getParamStringList(quint32 index) const
   * @param
   * @retval
   */
-int CCommandBuffer::getParamInt(quint32 index) const
+int CCommandBuffer::getParamInt(quint32 index, bool *ok) const
 {
   QByteArray value;
   this->getParam(index, value);
 
-  return value.toInt();
+  return value.toInt(ok);
 }
 
 /**
@@ -178,6 +178,19 @@ int CCommandBuffer::getParamIntFromHex(quint32 index) const
   this->getParam(index, value);
 
   return value.toInt(NULL, 16);
+}
+
+/**
+  * @brief  Возвращает параметр в виде числа с точкой
+  * @param
+  * @retval
+  */
+float CCommandBuffer::getParamFloat(quint32 index, bool *ok) const
+{
+  QByteArray value;
+
+  this->getParam(index, value);
+  return value.toFloat(ok);
 }
 
 /**

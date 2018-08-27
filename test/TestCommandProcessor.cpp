@@ -294,7 +294,7 @@ void CTestCommandProcessor::testManyCommands()
 
   // Проверяем получение ответа об успешном выполнении команды
   static CCommandBuffer::STextParsingDesc descr1 = {"+RESP", ','};
-  static CCommandBuffer::STextParsingDesc descr2 = {"+HI", ','};
+  static CCommandBuffer::STextParsingDesc descr2 = {"+THERE", ','};
   this->cmdProcessor->addAnswerWait(
           CCommandProcessor::SAnswerDescr(idTest1, &descr1, false, 5000)
         );
@@ -307,7 +307,7 @@ void CTestCommandProcessor::testManyCommands()
   QCOMPARE(spyGotAnswer->count(), 1);
   QCOMPARE(this->cmdProcessor->isEmpty(), false);
 
-  this->cmdProcessor->slotIncomingData("AGAIN_TRASH\r\n+HI:HELLO\r\n$OK\r\n");
+  this->cmdProcessor->slotIncomingData("AGAIN_TRASH\r\n+THERE:HELLO\r\n$OK\r\n");
   spyGotAnswer->wait(2000);
   QCOMPARE(spyGotAnswer->count(), 2);
 

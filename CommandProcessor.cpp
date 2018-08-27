@@ -117,6 +117,7 @@ void CCommandProcessor::checkUnexpected()
     if (descr && this->mBuffer.parse(*descr) == CCommandBuffer::PARSE_OK) {
       CAnswerBuffer answer = answerDescr.mAnswer;
       answer.append(this->mBuffer.getLine(), *descr);
+      mBuffer.releaseLine();
       emit this->signalGotAnswer(answer);
       return;
     }
@@ -218,7 +219,7 @@ void CCommandProcessor::slotTimeout()
 
   if (answerDescr->mTimeout < currentTime) {
     answerDescr->mAnswer.setResultStatus(CAnswerBuffer::EResultStatus::RS_TIMEOUT);
-    qDebug() << "Error timeout: " << answerDescr->mAnswer.getCmdId();
+//    qDebug() << "Error timeout: " << answerDescr->mAnswer.getCmdId();
     this->gotFullAnswer();
   }
 }

@@ -47,8 +47,9 @@ public:
   QString getParamString(quint32 index) const;
   QString getStringFromHeader() const;
   QStringList getParamStringList(quint32 index) const;
-  int getParamInt(quint32 index) const;
+  int getParamInt(quint32 index, bool *ok = NULL) const;
   int getParamIntFromHex(quint32 index) const;
+  float getParamFloat(quint32 index, bool *ok) const;
 
 protected:
   QByteArray getParam(const QList<QByteArray> list, quint32 index) const;
