@@ -185,7 +185,7 @@ int CCommandBuffer::getParamIntFromHex(quint32 index) const
   * @param
   * @retval
   */
-double CCommandBuffer::getParamFloat(quint32 index, bool *ok) const
+double CCommandBuffer::getParamDouble(quint32 index, bool *ok) const
 {
   QByteArray value;
 

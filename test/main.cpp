@@ -10,7 +10,7 @@
 
 int main(int argc, char *argv[])
 {
-  std::freopen("testing.log", "w", stdout);
+  std::freopen("QCommandExchangers_UnitTest.log", "w", stdout);
   QCoreApplication a(argc, argv);
 
   QTest::qExec(new CTestCommandBuffer, argc, argv);

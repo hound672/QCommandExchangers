@@ -5,13 +5,14 @@
 static const CCommandBuffer::STextParsingDesc descrOk = {"$OK", ','};
 static const CCommandBuffer::STextParsingDesc descrErr = {"$ERR", ','};
 static const CCommandBuffer::STextParsingDesc testCmd = {"$TEST", ','};
+static const CCommandBuffer::STextParsingDesc testCmd2 = {"$TST", ','};
 static const CCommandBuffer::STextParsingDesc difSep = {"$DIFSEP", '/'};
 static const CCommandBuffer::STextParsingDesc diag = {"$DIAG", ','};
 
 
 CTestCommandBuffer::CTestCommandBuffer(QObject *parent) : QObject(parent)
 {
-  buffer.append("$OK\r\n$ERR:256\r\n$TEST:9812,AABB,HELLO,1,2,3\r\n$DIFSEP:1/2/3\r\n");
+  buffer.append("$OK\r\n$ERR:256\r\n$TEST:9812,AABB,HELLO,1,2,3\r\n$TST:0.58,e=1,123\r\n$DIFSEP:1/2/3\r\n");
 }
 
 void CTestCommandBuffer::testContructor()
@@ -46,6 +47,7 @@ void CTestCommandBuffer::testError()
 {
   bool gotError = false;
   bool gotCmdAnswer = false;
+  bool gotCmd2Answer = false;
   bool gotDifSep = false;
 
   while (this->buffer.checkLine() == CCommandBuffer::LINE_COMPELETED) {
@@ -74,6 +76,23 @@ void CTestCommandBuffer::testError()
       QCOMPARE(val4, sampleList);
     }
 
+    if (this->buffer.parse(testCmd2) == CCommandBuffer::PARSE_OK) {
+      // $TST:0.58,e=1,123
+      gotCmd2Answer = true;
+      bool res;
+
+      double val1 = this->buffer.getParamDouble(0, &res);
+      QCOMPARE(val1, 0.58);
+      QCOMPARE(res, true);
+
+      int val2 = this->buffer.getParamInt(1, &res);
+      QCOMPARE(res, false) ;
+
+      int val3 = this->buffer.getParamInt(2, &res);
+      QCOMPARE(val3, 123);
+      QCOMPARE(res, true);
+    }
+
     if (this->buffer.parse(difSep) == CCommandBuffer::PARSE_OK) {
       gotDifSep = true;
 
@@ -87,6 +106,7 @@ void CTestCommandBuffer::testError()
 
   QCOMPARE(gotError, true);
   QCOMPARE(gotCmdAnswer, true);
+  QCOMPARE(gotCmd2Answer, true);
   QCOMPARE(gotDifSep, true);
 }
 
