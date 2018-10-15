@@ -59,7 +59,7 @@ bool CCommandProcessor::SAnswerDescr::hasExpired() const
   *                 не включает таймер и генерирует ошибку, если команды не было в списке не ожидаемых команд
   * @retval
   */
-CCommandProcessor::CCommandProcessor(const TAnswersList *unexpectedAnswers, bool onlyIn, QObject *parent) :
+CCommandProcessor::CCommandProcessor(const TAnswersDescrList *unexpectedAnswers, bool onlyIn, QObject *parent) :
   QObject(parent),
   mOnlyIn(onlyIn)
 {

@@ -4,7 +4,7 @@
 
 // ======================================================================
 
-CExchanger::CExchanger(QObject *parent) : CAbstractExchanger(NULL, parent)
+CExchanger::CExchanger(QObject *parent) : CAbstractExchanger(parent)
 {
   
 }

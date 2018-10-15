@@ -15,7 +15,7 @@ CTestCommandProcessor::CTestCommandProcessor(QObject *parent) :
   static CCommandBuffer::STextParsingDesc d2 = {"+HI", ','};
   static CCommandBuffer::STextParsingDesc d3 = {"+BYE", ','};
 
-  CCommandProcessor::TAnswersList answersList;
+  CCommandProcessor::TAnswersDescrList answersList;
   answersList.append(
           CCommandProcessor::SAnswerDescr(id1, &d1)
          );
