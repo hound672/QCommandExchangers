@@ -1,20 +1,26 @@
 #include <QDebug>
+#include "QCommandExchangersGlobal.h"
 
 #include "AbstractExchanger.h"
 
 
 // ---------------------------------------------------------------
 
-/* ***************** BEGIN *****************************
-   ****************** PUBLIC методы ********************
-   ***************************************************** */
-
 CAbstractExchanger::CAbstractExchanger(CCommandProcessor::TAnswersList *unexpectedAnswers, QObject *parent) :
   QObject(parent)
 {
   this->mCommandProcessor = new CCommandProcessor(unexpectedAnswers, false, parent);
   this->makeSignalSlots();
+  
+  qRegisterMetaType<TAnswersList>("TAnswersList");
 }
+
+// ======================================================================
+
+// ======================================================================
+//  public                       
+// ======================================================================
+
 
 /**
   * @brief  Отправляет команду на устройство и добавлет в очередь ожидание на ее ответ
@@ -27,6 +33,8 @@ void CAbstractExchanger::sendCommand(const QByteArray &cmdToSend, const CCommand
   this->mCommandProcessor->addAnswerWait(answerDescr);
 }
 
+// ======================================================================
+
 /**
   * @brief  Возвращает true если список на очедеь ожидания ответов на команду пустой
   * @param
@@ -37,16 +45,18 @@ bool CAbstractExchanger::isAnswersListEmpty()
   return mCommandProcessor->isEmpty();
 }
 
+// ======================================================================
+
 void CAbstractExchanger::clear()
 {
   mCommandProcessor->clear();
 }
 
-/* ******************* END *****************************
-   ****************** PUBLIC методы ********************
-   ***************************************************** */
-
 // ---------------------------------------------------------------
+
+// ======================================================================
+//  private                       
+// ======================================================================
 
 /**
   * @brief  Создаем связки сигналов слотов
@@ -61,9 +71,9 @@ void CAbstractExchanger::makeSignalSlots()
 
 // ------------------------------------------------
 
-/* ***************** BEGIN *****************************
-   ****************** PROTECTED методы ********************
-   ***************************************************** */
+// ======================================================================
+//  protected                       
+// ======================================================================
 
 /**
   * @brief  Получили данные от устройства
@@ -76,13 +86,26 @@ void CAbstractExchanger::gotIncomingData(const QByteArray &answer)
   emit this->signalGotRawData(answer);
 }
 
+// ======================================================================
+
+// ======================================================================
+//  private slots                       
+// ======================================================================
+
+/**
+  * @brief  Слот для обработки получения результата выпонения команды
+  * @param  
+  * @retval 
+  */
 void CAbstractExchanger::slotGotAnswer(const CAnswerBuffer &answer)
 {
   emit this->signalGotAnswer(answer);
+  mAnswersList.append(answer);
+  
+  if (this->isAnswersListEmpty()) {
+    emit this->signalCommandEnd(mAnswersList);
+    mAnswersList.clear();
+  }
 }
-
-/* ******************* END *****************************
-   ****************** PROTECTED методы ********************
-   ***************************************************** */
 
 // ---------------------------------------------------------------

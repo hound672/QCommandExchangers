@@ -35,14 +35,14 @@ void CTestAnswerBuffer::testAppend()
     cmdBuf.append((char)0x00);
   }
 
-  while (cmdBuf.checkLine() == CCommandBuffer::LINE_COMPELETED) {
+  while (cmdBuf.checkLine() == CCommandBuffer::lineCompleted) {
    qDebug() << "Process line: " << cmdBuf.getLine();
 
-   if (cmdBuf.parse(descrOk) == CCommandBuffer::PARSE_OK) {
+   if (cmdBuf.parse(descrOk) == CCommandBuffer::parseOk) {
      break;
    }
 
-   if (cmdBuf.parse(diag) == CCommandBuffer::PARSE_OK) {
+   if (cmdBuf.parse(diag) == CCommandBuffer::parseOk) {
     this->buffer.append(cmdBuf.getLine(), diag);
    }
 

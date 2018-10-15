@@ -11,8 +11,6 @@ static quint32 id3 = 789;
 CTestCommandProcessor::CTestCommandProcessor(QObject *parent) :
   QObject(parent)
 {
-  qRegisterMetaType<CAnswerBuffer>();
-
   static CCommandBuffer::STextParsingDesc d1 = {"+NOT", ','};
   static CCommandBuffer::STextParsingDesc d2 = {"+HI", ','};
   static CCommandBuffer::STextParsingDesc d3 = {"+BYE", ','};
@@ -50,7 +48,7 @@ void CTestCommandProcessor::testSignalTimeout()
 
   CAnswerBuffer answer = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
 
-  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::RS_TIMEOUT);
+  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::resTimeout);
   QCOMPARE(answer.getCmdId(), idTest);
 
   this->spyGotAnswer->clear();
@@ -76,7 +74,7 @@ void CTestCommandProcessor::testGettingResult()
   QCOMPARE(spyGotAnswer->count(), 1);
 
   CAnswerBuffer answer = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
-  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::RS_OK);
+  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::resOk);
   QCOMPARE(answer.getResultCode(), (quint32)0);
   QCOMPARE(answer.getCmdId(), idTest);
   this->spyGotAnswer->clear();
@@ -92,7 +90,7 @@ void CTestCommandProcessor::testGettingResult()
   QCOMPARE(spyGotAnswer->count(), 1);
 
   answer = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
-  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::RS_ERROR);
+  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::resError);
   QCOMPARE(answer.getResultCode(), (quint32)233);
   QCOMPARE(answer.getCmdId(), idTest);
 
@@ -119,7 +117,7 @@ void CTestCommandProcessor::testGettingAnswer()
   QCOMPARE(spyGotAnswer->count(), 1);
 
   CAnswerBuffer answer = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
-  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::RS_OK);
+  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::resOk);
   QCOMPARE(answer.getResultCode(), (quint32)0);
   QCOMPARE(answer.getCmdId(), idTest);
   QCOMPARE(answer.size(), 1);
@@ -148,7 +146,7 @@ void CTestCommandProcessor::testGettingAnswerResult()
   QCOMPARE(spyGotAnswer->count(), 1);
 
   CAnswerBuffer answer = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
-  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::RS_OK);
+  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::resOk);
   QCOMPARE(answer.getResultCode(), (quint32)0);
   QCOMPARE(answer.getCmdId(), idTest);
   QCOMPARE(answer.size(), 1);
@@ -168,7 +166,7 @@ void CTestCommandProcessor::testGettingAnswerResult()
   QCOMPARE(spyGotAnswer->count(), 1);
 
   answer = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
-  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::RS_ERROR);
+  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::resError);
   QCOMPARE(answer.getResultCode(), (quint32)123);
   QCOMPARE(answer.getCmdId(), idTest);
   QCOMPARE(answer.size(), 1);
@@ -187,7 +185,7 @@ void CTestCommandProcessor::testGettingAnswerResult()
   QCOMPARE(spyGotAnswer->count(), 1);
 
   answer = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
-  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::RS_TIMEOUT);
+  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::resTimeout);
   QCOMPARE(answer.getCmdId(), idTest);
 
   this->spyGotAnswer->clear();
@@ -218,7 +216,7 @@ void CTestCommandProcessor::testManyString()
   QCOMPARE(spyGotAnswer->count(), 1);
 
   CAnswerBuffer answer = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
-  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::RS_OK);
+  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::resOk);
   QCOMPARE(answer.getResultCode(), (quint32)0);
   QCOMPARE(answer.getCmdId(), idTest);
   QCOMPARE(answer.size(), 4);
@@ -251,7 +249,7 @@ void CTestCommandProcessor::testDifResult()
   QCOMPARE(spyGotAnswer->count(), 1);
 
   CAnswerBuffer answer = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
-  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::RS_OK);
+  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::resOk);
   QCOMPARE(answer.getResultCode(), (quint32)0);
   QCOMPARE(answer.getCmdId(), idTest);
   this->spyGotAnswer->clear();
@@ -271,7 +269,7 @@ void CTestCommandProcessor::testUnexpected()
   spyGotAnswer->wait(2000);
   QCOMPARE(spyGotAnswer->count(), 1);
   CAnswerBuffer answer = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
-  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::RS_OK);
+  QCOMPARE(answer.getResultStatus(), CAnswerBuffer::resOk);
   QCOMPARE(answer.getResultCode(), (quint32)0);
   QCOMPARE(answer.getCmdId(), idTest);
 
@@ -313,14 +311,14 @@ void CTestCommandProcessor::testManyCommands()
 
   CAnswerBuffer answer1 = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(0).at(0));
   CAnswerBuffer answer2 = qvariant_cast<CAnswerBuffer>(spyGotAnswer->at(1).at(0));
-  QCOMPARE(answer1.getResultStatus(), CAnswerBuffer::RS_OK);
+  QCOMPARE(answer1.getResultStatus(), CAnswerBuffer::resOk);
   QCOMPARE(answer1.getResultCode(), (quint32)0);
   QCOMPARE(answer1.getCmdId(), idTest1);
   QCOMPARE(answer1.size(), 1);
   QCOMPARE(answer1.at(0).getParamString(0), QString("1"));
   QCOMPARE(answer1.at(0).getParamInt(1), 2);
 
-  QCOMPARE(answer2.getResultStatus(), CAnswerBuffer::RS_OK);
+  QCOMPARE(answer2.getResultStatus(), CAnswerBuffer::resOk);
   QCOMPARE(answer2.getResultCode(), (quint32)0);
   QCOMPARE(answer2.getCmdId(), idTest2);
   QCOMPARE(answer2.size(), 1);

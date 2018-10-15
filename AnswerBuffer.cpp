@@ -5,9 +5,11 @@
 CAnswerBuffer::CAnswerBuffer(qint32 cmdId) :
   mCmdId(cmdId),
   mResultCode(0),
-  mResultStatus(EResultStatus::RS_OK)
+  mResultStatus(EResultStatus::resOk)
 {
 }
+
+// ======================================================================
 
 /**
   * @brief  Добавляет строку в список ответов и разбирает ее согласно переданному описанию
@@ -25,6 +27,8 @@ void CAnswerBuffer::append(const QByteArray &dataToAdd, const CCommandBuffer::ST
   QList<CCommandBuffer>::append(cmdBuffer);
 }
 
+// ======================================================================
+
 /**
   * @brief  Переопределяет метод родительского класса для получения первого элемента.
   *         С проверкой на пустой список
@@ -40,6 +44,8 @@ CCommandBuffer CAnswerBuffer::first() const
   return QList<CCommandBuffer>::first();
 }
 
+// ======================================================================
+
 /**
   * @brief  Переопределяет метод родительского класса для получения последнего элемента.
   *         С проверкой на пустой список
@@ -54,3 +60,5 @@ CCommandBuffer CAnswerBuffer::last() const
 
   return QList<CCommandBuffer>::last();
 }
+
+// ======================================================================

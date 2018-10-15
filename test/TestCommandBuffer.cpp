@@ -24,13 +24,13 @@ void CTestCommandBuffer::testContructor()
   QCOMPARE(cmdBuf1.size(), 0);
   QCOMPARE(cmdBuf2.size(), tmpStr.size());
 
-  QCOMPARE(cmdBuf2.checkLine(), CCommandBuffer::LINE_COMPELETED);
+  QCOMPARE(cmdBuf2.checkLine(), CCommandBuffer::lineCompleted);
   QCOMPARE(cmdBuf2.getLine(), QByteArray("HELLO_WORLD"));
 }
 
 void CTestCommandBuffer::checkLine()
 {
-  QCOMPARE(buffer.checkLine(), CCommandBuffer::LINE_COMPELETED);
+  QCOMPARE(buffer.checkLine(), CCommandBuffer::lineCompleted);
 }
 
 void CTestCommandBuffer::getLine()
@@ -40,7 +40,7 @@ void CTestCommandBuffer::getLine()
 
 void CTestCommandBuffer::parse()
 {
-  QCOMPARE(buffer.parse(descrOk), CCommandBuffer::PARSE_OK);
+  QCOMPARE(buffer.parse(descrOk), CCommandBuffer::parseOk);
 }
 
 void CTestCommandBuffer::testError()
@@ -50,16 +50,16 @@ void CTestCommandBuffer::testError()
   bool gotCmd2Answer = false;
   bool gotDifSep = false;
 
-  while (this->buffer.checkLine() == CCommandBuffer::LINE_COMPELETED) {
+  while (this->buffer.checkLine() == CCommandBuffer::lineCompleted) {
 
-    if (this->buffer.parse(descrErr) == CCommandBuffer::PARSE_OK) {
+    if (this->buffer.parse(descrErr) == CCommandBuffer::parseOk) {
       gotError = true;
       QCOMPARE(this->buffer.startsWith("$ERR"), true);
       int errorCode = this->buffer.getParamInt(0);
       QCOMPARE(errorCode, 256);
     }
 
-    if (this->buffer.parse(testCmd) == CCommandBuffer::PARSE_OK) {
+    if (this->buffer.parse(testCmd) == CCommandBuffer::parseOk) {
       gotCmdAnswer = true;
 
       int val1 = this->buffer.getParamInt(0);
@@ -76,7 +76,7 @@ void CTestCommandBuffer::testError()
       QCOMPARE(val4, sampleList);
     }
 
-    if (this->buffer.parse(testCmd2) == CCommandBuffer::PARSE_OK) {
+    if (this->buffer.parse(testCmd2) == CCommandBuffer::parseOk) {
       // $TST:0.58,e=1,123
       gotCmd2Answer = true;
       bool res;
@@ -93,7 +93,7 @@ void CTestCommandBuffer::testError()
       QCOMPARE(res, true);
     }
 
-    if (this->buffer.parse(difSep) == CCommandBuffer::PARSE_OK) {
+    if (this->buffer.parse(difSep) == CCommandBuffer::parseOk) {
       gotDifSep = true;
 
       QStringList sampleList = {"1", "2", "3"};
@@ -140,14 +140,14 @@ void CTestCommandBuffer::testDiagParse()
     this->buffer.append((char)0x00);
   }
 
-   while (this->buffer.checkLine() == CCommandBuffer::LINE_COMPELETED) {
+   while (this->buffer.checkLine() == CCommandBuffer::lineCompleted) {
     qDebug() << "Process line: " << this->buffer.getLine();
 
-    if (this->buffer.parse(descrOk) == CCommandBuffer::PARSE_OK) {
+    if (this->buffer.parse(descrOk) == CCommandBuffer::parseOk) {
       break;
     }
 
-    QCOMPARE(this->buffer.parse(diag), CCommandBuffer::PARSE_OK);
+    QCOMPARE(this->buffer.parse(diag), CCommandBuffer::parseOk);
     QCOMPARE(this->buffer.getLine(), samples.at(cnt));
     cnt++;
 

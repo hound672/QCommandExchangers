@@ -14,21 +14,19 @@ class CCommandBuffer: public QByteArray
 public:
 
   enum EResultParse {
-    PARSE_OK = 0,
-    PARSE_ERROR_PREFIX,
-    PARSE_ERROR_NEED_PARSE,
-    PARSE_ERROR_INDEX,
+    parseOk = 0,        
+    parseErrorPrefix,
+    parseNeedParse,
+    parseErrorIndex,
   };
 
   enum ELineStatus {
-    LINE_COMPELETED = 0,
-    LINE_NOT_COMPELETED,
-    LINE_ERROR,
+    lineCompleted = 0,
+    lineNotCompleted,
+    lineError,
   };
 
-  /*********************************************
-   *  Структура описывающяя формат разбора команды
-   *********************************************/
+  // Структура описывающяя формат разбора команды                      
   struct STextParsingDesc
   {
     QByteArray mPrefix; // префикс команды
@@ -42,6 +40,7 @@ public:
   void releaseLine();
   void resetBuffer();
   EResultParse parse(const STextParsingDesc &parseDescr);
+  
   EResultParse getParam(quint32 index, QByteArray &data) const;
   QByteArray getParamArray(quint32 index) const;
   QString getParamString(quint32 index) const;

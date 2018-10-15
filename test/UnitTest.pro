@@ -17,7 +17,10 @@ SOURCES += main.cpp \
     TestCommandBuffer.cpp \
     TestAnswerBuffer.cpp \
     ../CommandProcessor.cpp \
-    TestCommandProcessor.cpp
+    TestCommandProcessor.cpp \
+    ../AbstractExchanger.cpp \
+    Exchanger.cpp \
+    TestAbstractExchanger.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -36,4 +39,11 @@ HEADERS += \
     TestCommandBuffer.h \
     TestAnswerBuffer.h \
     ../CommandProcessor.h \
-    TestCommandProcessor.h
+    TestCommandProcessor.h \
+    ../AbstractExchanger.h \
+    Exchanger.h \
+    ../QCommandExchangersGlobal.h \
+    TestAbstractExchanger.h
+
+DISTFILES += \
+    ../readme.MD

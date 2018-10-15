@@ -1,12 +1,18 @@
 #include <QDebug>
 
+#include "QCommandExchangersGlobal.h"
+
 #include "CommandBuffer.h"
+
+// ======================================================================
 
 CCommandBuffer::CCommandBuffer(const QByteArray &data):
   QByteArray(data),
   endString(0)
 {
 }
+
+// ======================================================================
 
 /**
   * @brief  Определяет наличие строки в буффере
@@ -43,13 +49,15 @@ CCommandBuffer::ELineStatus CCommandBuffer::checkLine()
   if (offset < sizeData) {
     QByteArray::operator [](offset) = 0x00;
     this->endString = offset;
-    return ELineStatus::LINE_COMPELETED;
+    return ELineStatus::lineCompleted;
   } else if (offset) {
-    return ELineStatus::LINE_NOT_COMPELETED;
+    return ELineStatus::lineNotCompleted;
   }
 
-  return ELineStatus::LINE_ERROR;
+  return ELineStatus::lineError;
 }
+
+// ======================================================================
 
 /**
   * @brief  Возвращает найденую ранее строку
@@ -60,6 +68,8 @@ QByteArray CCommandBuffer::getLine() const
 {
   return QByteArray::mid(0, this->endString);
 }
+
+// ======================================================================
 
 /**
   * @brief  Удаляет из буфере ранее найденую строку
@@ -78,6 +88,8 @@ void CCommandBuffer::resetBuffer()
   QByteArray::clear();
 }
 
+// ======================================================================
+
 /**
   * @brief  Согласно переданному шаблону осуществляет поиск команды в буффере
   * @param  descr: описание для парсинга команды
@@ -86,12 +98,14 @@ void CCommandBuffer::resetBuffer()
 CCommandBuffer::EResultParse CCommandBuffer::parse(const CCommandBuffer::STextParsingDesc &parseDescr)
 {
   if (!this->getLine().startsWith(parseDescr.mPrefix)) {
-    return EResultParse::PARSE_ERROR_PREFIX;
+    return EResultParse::parseErrorPrefix;
   }
   this->splitData = this->splitParams(parseDescr);
   mStartPayload = parseDescr.mPrefix.size() + 1; // +1 для разделителя
-  return EResultParse::PARSE_OK;
+  return EResultParse::parseOk;
 }
+
+// ======================================================================
 
 /**
   * @brief  Возвращает параметр из текста команды
@@ -101,17 +115,19 @@ CCommandBuffer::EResultParse CCommandBuffer::parse(const CCommandBuffer::STextPa
 CCommandBuffer::EResultParse CCommandBuffer::getParam(quint32 index, QByteArray &data) const
 {
   if (splitData.isEmpty()) {
-    return EResultParse::PARSE_ERROR_NEED_PARSE;
+    return EResultParse::parseNeedParse;
   }
 
   if (index >= (quint32)this->splitData.size()) {
-    return EResultParse::PARSE_ERROR_INDEX;
+    return EResultParse::parseErrorIndex;
   }
 
   data = this->getParam(this->splitData, index);
 
-  return EResultParse::PARSE_OK;
+  return EResultParse::parseOk;
 }
+
+// ======================================================================
 
 QByteArray CCommandBuffer::getParamArray(quint32 index) const
 {
@@ -121,6 +137,8 @@ QByteArray CCommandBuffer::getParamArray(quint32 index) const
   return value;
 }
 
+// ======================================================================
+
 QString CCommandBuffer::getParamString(quint32 index) const
 {
   QByteArray value;
@@ -128,6 +146,8 @@ QString CCommandBuffer::getParamString(quint32 index) const
 
   return QString::fromUtf8(value);
 }
+
+// ======================================================================
 
 /**
   * @brief  Возвращает всю строку кроме заголовка описанного в prefix header
@@ -138,6 +158,8 @@ QString CCommandBuffer::getStringFromHeader() const
 {
   return QString(QByteArray::mid(mStartPayload, QByteArray::size()));
 }
+
+// ======================================================================
 
 /**
   * @brief  Возвращает список параметров
@@ -154,6 +176,8 @@ QStringList CCommandBuffer::getParamStringList(quint32 index) const
   return data;
 }
 
+// ======================================================================
+
 /**
   * @brief  Возвращает параметр в виде числа
   * @param
@@ -166,6 +190,8 @@ int CCommandBuffer::getParamInt(quint32 index, bool *ok) const
 
   return value.toInt(ok);
 }
+
+// ======================================================================
 
 /**
   * @brief  Возращает параметр в виде числа, который был представлен HEX строкой
@@ -180,6 +206,8 @@ int CCommandBuffer::getParamIntFromHex(quint32 index) const
   return value.toInt(NULL, 16);
 }
 
+// ======================================================================
+
 /**
   * @brief  Возвращает параметр в виде числа с точкой
   * @param
@@ -192,6 +220,8 @@ double CCommandBuffer::getParamDouble(quint32 index, bool *ok) const
   this->getParam(index, value);
   return value.toDouble(ok);
 }
+
+// ======================================================================
 
 /**
   * @brief  Из переданного списка возвращает запрашиваемый параметр
@@ -207,6 +237,8 @@ QByteArray CCommandBuffer::getParam(const QList<QByteArray> list, quint32 index)
   return list[index];
 }
 
+// ======================================================================
+
 /**
   * @brief  Возвращает список с разделенными параметрами
   * @param
@@ -219,3 +251,5 @@ QList<QByteArray> CCommandBuffer::splitParams(const CCommandBuffer::STextParsing
   QByteArray tmpData = this->getLine().mid(pos);
   return tmpData.split(separator);
 }
+
+// ======================================================================

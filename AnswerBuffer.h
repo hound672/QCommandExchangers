@@ -9,11 +9,12 @@ class CAnswerBuffer : public QList<CCommandBuffer>
 {
 
 public:
+  
   enum EResultStatus {
-    RS_OK = 0,  // успешное выполнение команды
-    RS_ERROR,   // ошибка выполнения команды, подробности должны быть в поле resultCode
-    RS_TIMEOUT, // ошибка таймаута ожидания ответа на команду
-    RS_UNKNOWN, // неизвестное состояние
+    resOk = 0,  // успешное выполнение команды
+    resError,   // ошибка выполнения команды, подробности должны быть в поле resultCode
+    resTimeout, // ошибка таймаута ожидания ответа на команду
+    resUnknown, // неизвестное состояние
   };
 
 public:
