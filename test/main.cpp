@@ -16,8 +16,8 @@ int main(int argc, char *argv[])
   
   qputenv("QCOM_EXCH", QByteArray("1"));
 
-  qRegisterMetaType<CAnswerBuffer>("CAnswerBuffer");
-//  qRegisterMetaType<CAbstractExchanger::TAnswersList>("CAbstractExchanger::TAnswersList");
+  qRegisterMetaType<QAnswerBuffer>("QAnswerBuffer");
+//  qRegisterMetaType<QAbstractExchanger::TAnswersList>("QAbstractExchanger::TAnswersList");
   
   QTest::qExec(new CTestCommandBuffer, argc, argv);
   QTest::qExec(new CTestAnswerBuffer, argc, argv);

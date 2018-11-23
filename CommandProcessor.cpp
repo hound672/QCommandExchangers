@@ -64,7 +64,7 @@ CCommandProcessor::CCommandProcessor(const TAnswersDescrList *unexpectedAnswers,
   mOnlyIn(onlyIn)
 {
   connect(&mTimer, SIGNAL(timeout()),
-          this, SLOT(slotTimeout()));
+          this, SLOT(SlotTimeout()));
 
   if (unexpectedAnswers) {
     mUnexpectedList = *unexpectedAnswers;
@@ -120,10 +120,10 @@ void CCommandProcessor::gotFullAnswer()
     return;
   }
 
-  CAnswerBuffer answer = mCommandsList.first().mAnswer;
+  QAnswerBuffer answer = mCommandsList.first().mAnswer;
 
   this->removeFirstCommand();
-  emit this->signalGotAnswer(answer);
+  emit this->SignalGotAnswer(answer);
 }
 
 // ======================================================================
@@ -139,17 +139,17 @@ void CCommandProcessor::checkUnexpected()
     const CCommandBuffer::STextParsingDesc *descr = answerDescr.mAnswerDescr;
 
     if (descr && this->mBuffer.parse(*descr) == CCommandBuffer::parseOk) {
-      CAnswerBuffer answer = answerDescr.mAnswer;
+      QAnswerBuffer answer = answerDescr.mAnswer;
       answer.append(this->mBuffer.getLine(), *descr);
       mBuffer.releaseLine();
-      emit this->signalGotAnswer(answer);
+      emit this->SignalGotAnswer(answer);
       return;
     }
   }
 
   if (mOnlyIn) {
     // команда не была найдена в списке не ожидаемых и режим работы только входящие команды
-    emit this->signalUnknownCmd();
+    emit this->SignalUnknownCmd();
   }
 }
 
@@ -174,7 +174,7 @@ void CCommandProcessor::removeFirstCommand()
   * @param
   * @retval
   */
-void CCommandProcessor::slotIncomingData(const QByteArray &data)
+void CCommandProcessor::SlotIncomingData(const QByteArray &data)
 {
   this->mBuffer.append(data); // добавляем данные в буффер
 
@@ -211,12 +211,12 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
       if ((res = this->mBuffer.parse(*descrForOk)) == CCommandBuffer::parseOk) {
 
         // получили статус выполнения, который ждали
-        answerDescr->mAnswer.setResultCode(0);
+        answerDescr->mAnswer.SetResultCode(0);
 
       } else if ((res = this->mBuffer.parse(descrErr)) == CCommandBuffer::parseOk) {
 
-        answerDescr->mAnswer.setResultCode(this->mBuffer.getParamInt(0));
-        answerDescr->mAnswer.setResultStatus(CAnswerBuffer::EResultStatus::resError);
+        answerDescr->mAnswer.SetResultCode(this->mBuffer.getParamInt(0));
+        answerDescr->mAnswer.SetResultStatus(QAnswerBuffer::EResultStatus::resError);
 
       }
 
@@ -236,7 +236,7 @@ void CCommandProcessor::slotIncomingData(const QByteArray &data)
 
 // ======================================================================
 
-void CCommandProcessor::slotTimeout()
+void CCommandProcessor::SlotTimeout()
 {
   if (this->mCommandsList.isEmpty()) {
     // список команд пуст, нечего ожидать
@@ -247,8 +247,8 @@ void CCommandProcessor::slotTimeout()
   CCommandProcessor::SAnswerDescr *answerDescr = &(this->mCommandsList[0]);
 
   if (answerDescr->hasExpired()) {
-    answerDescr->mAnswer.setResultStatus(CAnswerBuffer::EResultStatus::resTimeout);
-    qDebugComExch() << "Error timeout: " << answerDescr->mAnswer.getCmdId();
+    answerDescr->mAnswer.SetResultStatus(QAnswerBuffer::EResultStatus::resTimeout);
+    qDebugComExch() << "Error timeout: " << answerDescr->mAnswer.GetCmdId();
     this->gotFullAnswer();
   }
 }

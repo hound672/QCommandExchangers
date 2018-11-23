@@ -3,16 +3,16 @@
 
 #include <QObject>
 
-#include "AbstractExchanger.h"
+#include "QAbstractExchanger.h"
 
-class CExchanger : public CAbstractExchanger
+class CExchanger : public QAbstractExchanger
 {
   Q_OBJECT
 public:
   explicit CExchanger(QObject *parent = 0);
-  void connectDevice() {}
-  void disconnectDevice() {}
-  void sendData(const QByteArray &cmdToSend, bool waitAnswer) {}
+  void ConnectDevice() {}
+  void DisconnectDevice() {}
+  void SendData(const QByteArray &cmdToSend) {}
   
   void putData(const QByteArray &data);
   

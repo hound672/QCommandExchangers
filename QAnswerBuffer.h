@@ -5,7 +5,7 @@
 
 #include "CommandBuffer.h"
 
-class CAnswerBuffer : public QList<CCommandBuffer>
+class QAnswerBuffer : public QList<CCommandBuffer>
 {
 
 public:
@@ -18,19 +18,19 @@ public:
   };
 
 public:
-  CAnswerBuffer(qint32 mCmdId = 0);
+  QAnswerBuffer(qint32 mCmdId = 0);
   void append(const QByteArray &dataToAdd, const CCommandBuffer::STextParsingDesc &parseDescr);
   CCommandBuffer first() const;
   CCommandBuffer last() const;
 
-  void setCmdId(quint32 cmdId) {mCmdId = cmdId;}
-  quint32 getCmdId() const {return mCmdId;}
+  void SetCmdId(quint32 cmdId) {mCmdId = cmdId;}
+  quint32 GetCmdId() const {return mCmdId;}
 
-  void setResultCode(quint32 resultStatus) {mResultCode = resultStatus;}
-  quint32 getResultCode() const {return mResultCode;}
+  void SetResultCode(quint32 resultStatus) {mResultCode = resultStatus;}
+  quint32 GetResultCode() const {return mResultCode;}
 
-  void setResultStatus(EResultStatus state) {mResultStatus = state;}
-  EResultStatus getResultStatus() const {return mResultStatus;}
+  void SetResultStatus(EResultStatus state) {mResultStatus = state;}
+  EResultStatus GetResultStatus() const {return mResultStatus;}
 
 private:
   quint32 mCmdId; // идентификатор команды

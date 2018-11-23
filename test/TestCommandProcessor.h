@@ -7,7 +7,7 @@
 #include "CommandProcessor.h"
 
 
-Q_DECLARE_METATYPE(CAnswerBuffer)
+Q_DECLARE_METATYPE(QAnswerBuffer)
 
 class CTestCommandProcessor : public QObject
 {

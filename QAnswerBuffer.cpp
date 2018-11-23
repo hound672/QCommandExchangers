@@ -1,8 +1,8 @@
 #include <QDebug>
 
-#include "AnswerBuffer.h"
+#include "QAnswerBuffer.h"
 
-CAnswerBuffer::CAnswerBuffer(qint32 cmdId) :
+QAnswerBuffer::QAnswerBuffer(qint32 cmdId) :
   mCmdId(cmdId),
   mResultCode(0),
   mResultStatus(EResultStatus::resOk)
@@ -16,7 +16,7 @@ CAnswerBuffer::CAnswerBuffer(qint32 cmdId) :
   * @param
   * @retval
   */
-void CAnswerBuffer::append(const QByteArray &dataToAdd, const CCommandBuffer::STextParsingDesc &parseDescr)
+void QAnswerBuffer::append(const QByteArray &dataToAdd, const CCommandBuffer::STextParsingDesc &parseDescr)
 {
   CCommandBuffer cmdBuffer(dataToAdd);
 
@@ -35,7 +35,7 @@ void CAnswerBuffer::append(const QByteArray &dataToAdd, const CCommandBuffer::ST
   * @param
   * @retval
   */
-CCommandBuffer CAnswerBuffer::first() const
+CCommandBuffer QAnswerBuffer::first() const
 {
   if (QList<CCommandBuffer>::isEmpty()) {
     return CCommandBuffer();
@@ -52,7 +52,7 @@ CCommandBuffer CAnswerBuffer::first() const
   * @param
   * @retval
   */
-CCommandBuffer CAnswerBuffer::last() const
+CCommandBuffer QAnswerBuffer::last() const
 {
   if (QList<CCommandBuffer>::isEmpty()) {
     return CCommandBuffer();

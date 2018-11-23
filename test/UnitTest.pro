@@ -13,12 +13,12 @@ INCLUDEPATH += $$PWD\..\
 
 SOURCES += main.cpp \
     ../CommandBuffer.cpp \
-    ../AnswerBuffer.cpp \
+    ../QAnswerBuffer.cpp \
     TestCommandBuffer.cpp \
     TestAnswerBuffer.cpp \
     ../CommandProcessor.cpp \
     TestCommandProcessor.cpp \
-    ../AbstractExchanger.cpp \
+    ../QAbstractExchanger.cpp \
     Exchanger.cpp \
     TestAbstractExchanger.cpp
 
@@ -35,12 +35,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 HEADERS += \
     ../CommandBuffer.h \
-    ../AnswerBuffer.h \
+    ../QAnswerBuffer.h \
     TestCommandBuffer.h \
     TestAnswerBuffer.h \
     ../CommandProcessor.h \
     TestCommandProcessor.h \
-    ../AbstractExchanger.h \
+    ../QAbstractExchanger.h \
     Exchanger.h \
     ../QCommandExchangersGlobal.h \
     TestAbstractExchanger.h

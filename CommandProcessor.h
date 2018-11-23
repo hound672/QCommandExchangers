@@ -7,7 +7,7 @@
 #include <QElapsedTimer>
 
 #include "CommandBuffer.h"
-#include "AnswerBuffer.h"
+#include "QAnswerBuffer.h"
 
 class CCommandProcessor : public QObject
 {
@@ -37,7 +37,7 @@ public:
                                                            // если NULL то ответа не ожидаем
     const CCommandBuffer::STextParsingDesc *mDescrOk;     // описание для парсинга результата выполнения команды
                                                            // если NULL то используем стандартное
-    CAnswerBuffer mAnswer; // буфер под ответ на команду
+    QAnswerBuffer mAnswer; // буфер под ответ на команду
 
     SAnswerDescr() {}
     SAnswerDescr(quint32 cmdId, const CCommandBuffer::STextParsingDesc *answerDescr = NULL,
@@ -73,14 +73,14 @@ private:
   CCommandBuffer mBuffer;
 
 signals:
-  void signalGotAnswer(const CAnswerBuffer &answerBuffer); // Сигнал о получении ответа на команду
-  void signalUnknownCmd();
+  void SignalGotAnswer(const QAnswerBuffer &answerBuffer); // Сигнал о получении ответа на команду
+  void SignalUnknownCmd();
 
 public slots:
-  void slotIncomingData(const QByteArray &data);
+  void SlotIncomingData(const QByteArray &data);
 
 private slots:
-  void slotTimeout();
+  void SlotTimeout();
 
 };
 

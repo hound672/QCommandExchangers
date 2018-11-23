@@ -4,7 +4,7 @@
 
 // ======================================================================
 
-CExchanger::CExchanger(QObject *parent) : CAbstractExchanger(parent)
+CExchanger::CExchanger(QObject *parent) : QAbstractExchanger(parent)
 {
   
 }
@@ -13,7 +13,7 @@ CExchanger::CExchanger(QObject *parent) : CAbstractExchanger(parent)
 
 void CExchanger::putData(const QByteArray &data)
 {
-  this->gotIncomingData(data);
+  GotIncomingData(data);
 }
 
 // ======================================================================

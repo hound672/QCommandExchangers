@@ -80,7 +80,7 @@ void CTestAnswerBuffer::testParams()
 
 void CTestAnswerBuffer::testFirstLast()
 {
-  CAnswerBuffer answerBuf;
+  QAnswerBuffer answerBuf;
 
   CCommandBuffer buf1 = answerBuf.first();
   CCommandBuffer buf2 = answerBuf.last();

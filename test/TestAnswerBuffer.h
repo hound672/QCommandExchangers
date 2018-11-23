@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "AnswerBuffer.h"
+#include "QAnswerBuffer.h"
 
 class CTestAnswerBuffer : public QObject
 {
@@ -12,7 +12,7 @@ public:
   explicit CTestAnswerBuffer(QObject *parent = 0);
 
 private:
-  CAnswerBuffer buffer;
+  QAnswerBuffer buffer;
 
 
 private slots:
