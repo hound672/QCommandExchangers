@@ -10,9 +10,9 @@ class CExchanger : public QAbstractExchanger
   Q_OBJECT
 public:
   explicit CExchanger(QObject *parent = 0);
-  void ConnectDevice() {}
-  void DisconnectDevice() {}
-  void SendData(const QByteArray &cmdToSend) {}
+  void connectDevice() {}
+  void disconnectDevice() {}
+  void sendData(const QByteArray &cmdToSend) {}
   
   void putData(const QByteArray &data);
   

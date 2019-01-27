@@ -135,13 +135,11 @@ void CTestCommandBuffer::testDiagParse()
   };
 
   for (int i = 0; i < samples.size(); i++) {
-    qDebug() << "Add sample: " << samples.at(i);
     this->buffer.append(samples[i]);
     this->buffer.append((char)0x00);
   }
 
    while (this->buffer.checkLine() == CCommandBuffer::lineCompleted) {
-    qDebug() << "Process line: " << this->buffer.getLine();
 
     if (this->buffer.parse(descrOk) == CCommandBuffer::parseOk) {
       break;
@@ -155,4 +153,3 @@ void CTestCommandBuffer::testDiagParse()
      }
 }
 
-QTEST_MAIN(CTestCommandBuffer)

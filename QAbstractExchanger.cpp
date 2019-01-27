@@ -21,7 +21,7 @@ QAbstractExchanger::QAbstractExchanger(ICommandLogger *commandLogger,
   mCommandLogger(commandLogger)
 {
   mCommandProcessor = new CCommandProcessor(unexpectedAnswers, false, parent);
-  MakeSignalSlots();
+  makeSignalSlots();
   
   qRegisterMetaType<TAnswersList>("TAnswersList");
 }
@@ -38,9 +38,9 @@ QAbstractExchanger::QAbstractExchanger(ICommandLogger *commandLogger,
   * @param
   * @retval
   */
-void QAbstractExchanger::SendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr)
+void QAbstractExchanger::sendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr)
 {
-  this->SendData(cmdToSend);
+  this->sendData(cmdToSend);
   this->mCommandProcessor->addAnswerWait(answerDescr);
   
   if (mCommandLogger) {
@@ -55,14 +55,14 @@ void QAbstractExchanger::SendCommand(const QByteArray &cmdToSend, const CCommand
   * @param
   * @retval
   */
-bool QAbstractExchanger::IsAnswersListEmpty()
+bool QAbstractExchanger::isAnswersListEmpty()
 {
   return mCommandProcessor->isEmpty();
 }
 
 // ======================================================================
 
-void QAbstractExchanger::Clear()
+void QAbstractExchanger::clear()
 {
 	mCommandProcessor->clear();
 }
@@ -74,7 +74,7 @@ void QAbstractExchanger::Clear()
 	* @param  
 	* @retval 
 	*/
-void QAbstractExchanger::SetCommandLogger(ICommandLogger *commandLogger)
+void QAbstractExchanger::setCommandLogger(ICommandLogger *commandLogger)
 {
 	mCommandLogger = commandLogger;
 }
@@ -90,7 +90,7 @@ void QAbstractExchanger::SetCommandLogger(ICommandLogger *commandLogger)
   * @param
   * @retval
   */
-void QAbstractExchanger::MakeSignalSlots()
+void QAbstractExchanger::makeSignalSlots()
 {
   connect(this->mCommandProcessor, SIGNAL(SignalGotAnswer(const QAnswerBuffer&)),
           this, SLOT(SlotGotAnswer(const QAnswerBuffer&)));
@@ -107,7 +107,7 @@ void QAbstractExchanger::MakeSignalSlots()
   * @param
   * @retval
   */
-void QAbstractExchanger::GotIncomingData(const QByteArray &answer)
+void QAbstractExchanger::gotIncomingData(const QByteArray &answer)
 {
   mCommandProcessor->SlotIncomingData(answer);
   emit this->SignalGotRawData(answer);
@@ -133,7 +133,7 @@ void QAbstractExchanger::SlotGotAnswer(const QAnswerBuffer &answer)
   emit SignalGotAnswer(answer);
   mAnswersList.append(answer);
   
-  if (this->IsAnswersListEmpty()) {
+  if (this->isAnswersListEmpty()) {
     emit SignalCommandEnd(mAnswersList);
     mAnswersList.clear();
   }

@@ -30,13 +30,11 @@ void CTestAnswerBuffer::testAppend()
   CCommandBuffer cmdBuf;
 
   for (int i = 0; i < samples.size(); i++) {
-    qDebug() << "Add sample: " << samples.at(i);
     cmdBuf.append(samples[i]);
     cmdBuf.append((char)0x00);
   }
 
   while (cmdBuf.checkLine() == CCommandBuffer::lineCompleted) {
-   qDebug() << "Process line: " << cmdBuf.getLine();
 
    if (cmdBuf.parse(descrOk) == CCommandBuffer::parseOk) {
      break;
@@ -86,6 +84,3 @@ void CTestAnswerBuffer::testFirstLast()
   CCommandBuffer buf2 = answerBuf.last();
 }
 
-// ======================================================================
-
-QTEST_MAIN(CTestAnswerBuffer)

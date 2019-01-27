@@ -39,14 +39,14 @@ public:
 // ======================================================================
 	
 public:
-  virtual void ConnectDevice() = 0;			// метод для подключения к устройству
-	virtual void DisconnectDevice() = 0;	// метод для отключения от устройства
-  virtual void SendData(const QByteArray &cmdToSend) = 0; // виртуальный метод для отправки команды
+  virtual void connectDevice() = 0;			// метод для подключения к устройству
+	virtual void disconnectDevice() = 0;	// метод для отключения от устройства
+  virtual void sendData(const QByteArray &cmdToSend) = 0; // виртуальный метод для отправки команды
 	// ======================================================================
-  void SendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr);
-  bool IsAnswersListEmpty();
-  void Clear();
-	void SetCommandLogger(ICommandLogger *commandLogger);
+  void sendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr);
+  bool isAnswersListEmpty();
+  void clear();
+	void setCommandLogger(ICommandLogger *commandLogger);
 	
 // ======================================================================
 
@@ -58,8 +58,8 @@ protected:
 // ======================================================================
 
 protected:
-  void MakeSignalSlots();
-  void GotIncomingData(const QByteArray &answer); // вызывается наследником при получении данных от устройства
+  void makeSignalSlots();
+  void gotIncomingData(const QByteArray &answer); // вызывается наследником при получении данных от устройства
 	
 // ======================================================================
 

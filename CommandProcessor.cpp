@@ -211,12 +211,12 @@ void CCommandProcessor::SlotIncomingData(const QByteArray &data)
       if ((res = this->mBuffer.parse(*descrForOk)) == CCommandBuffer::parseOk) {
 
         // получили статус выполнения, который ждали
-        answerDescr->mAnswer.SetResultCode(0);
+        answerDescr->mAnswer.setResultCode(0);
 
       } else if ((res = this->mBuffer.parse(descrErr)) == CCommandBuffer::parseOk) {
 
-        answerDescr->mAnswer.SetResultCode(this->mBuffer.getParamInt(0));
-        answerDescr->mAnswer.SetResultStatus(QAnswerBuffer::EResultStatus::resError);
+        answerDescr->mAnswer.setResultCode(this->mBuffer.getParamInt(0));
+        answerDescr->mAnswer.setResultStatus(QAnswerBuffer::EResultStatus::resError);
 
       }
 
@@ -247,8 +247,8 @@ void CCommandProcessor::SlotTimeout()
   CCommandProcessor::SAnswerDescr *answerDescr = &(this->mCommandsList[0]);
 
   if (answerDescr->hasExpired()) {
-    answerDescr->mAnswer.SetResultStatus(QAnswerBuffer::EResultStatus::resTimeout);
-    qDebugComExch() << "Error timeout: " << answerDescr->mAnswer.GetCmdId();
+    answerDescr->mAnswer.setResultStatus(QAnswerBuffer::EResultStatus::resTimeout);
+    qDebugComExch() << "Error timeout: " << answerDescr->mAnswer.getCmdId();
     this->gotFullAnswer();
   }
 }

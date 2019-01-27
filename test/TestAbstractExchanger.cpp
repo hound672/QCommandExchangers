@@ -9,7 +9,6 @@
 
 CTestAbstractExchanger::CTestAbstractExchanger(QObject *parent) : QObject(parent)
 {
-	qRegisterMetaType<QAnswerBuffer>("QAnswerBuffer");
   mExchanger = new CExchanger();
   mSpyAnswer = new QSignalSpy(mExchanger, SIGNAL(SignalGotAnswer(const QAnswerBuffer&)));
 }
@@ -48,16 +47,16 @@ void CTestAbstractExchanger::testGettingAnswer()
   static CCommandBuffer::STextParsingDesc descr = {"+RESP", ','};
   CCommandProcessor::SAnswerDescr answerDescr(cmdId, &descr);
   
-  mExchanger->SendCommand("TEST_COMMAND", answerDescr);
+  mExchanger->sendCommand("TEST_COMMAND", answerDescr);
   mExchanger->putData("\r\n+RESP:HELLO:123,HI\r\n");
   
   mSpyAnswer->wait(2000);
   QCOMPARE(mSpyAnswer->count(), 1);
   
   QAnswerBuffer answer = qvariant_cast<QAnswerBuffer>(mSpyAnswer->at(0).at(0));
-  QCOMPARE(answer.GetResultStatus(), QAnswerBuffer::resOk);
-  QCOMPARE(answer.GetResultCode(), (quint32)0);
-  QCOMPARE((int)answer.GetCmdId(), cmdId);
+  QCOMPARE(answer.getResultStatus(), QAnswerBuffer::resOk);
+  QCOMPARE(answer.getResultCode(), (quint32)0);
+  QCOMPARE((int)answer.getCmdId(), cmdId);
   
   mSpyAnswer->clear();
 }
@@ -80,9 +79,9 @@ void CTestAbstractExchanger::testCommandEnd()
   
   // ======================================================================
   
-  mExchanger->SendCommand("", answerDescr1);
-  mExchanger->SendCommand("", answerDescr2);
-  mExchanger->SendCommand("", answerDescr3);
+  mExchanger->sendCommand("", answerDescr1);
+  mExchanger->sendCommand("", answerDescr2);
+  mExchanger->sendCommand("", answerDescr3);
   
   mExchanger->putData("\r\n+CMD1:1,2\r\n+CMD2:3,4\r\n");
   
@@ -99,17 +98,17 @@ void CTestAbstractExchanger::testCommandEnd()
   QAnswerBuffer answer2 = answersList.at(1);
   QAnswerBuffer answer3 = answersList.at(2);
   
-  QCOMPARE(answer1.GetResultStatus(), QAnswerBuffer::resOk);
-  QCOMPARE(answer1.GetResultCode(), (quint32)0);
-  QCOMPARE(answer1.GetCmdId(), cmd1);
+  QCOMPARE(answer1.getResultStatus(), QAnswerBuffer::resOk);
+  QCOMPARE(answer1.getResultCode(), (quint32)0);
+  QCOMPARE(answer1.getCmdId(), cmd1);
 
-  QCOMPARE(answer2.GetResultStatus(), QAnswerBuffer::resOk);
-  QCOMPARE(answer2.GetResultCode(), (quint32)0);
-  QCOMPARE(answer2.GetCmdId(), cmd2);
+  QCOMPARE(answer2.getResultStatus(), QAnswerBuffer::resOk);
+  QCOMPARE(answer2.getResultCode(), (quint32)0);
+  QCOMPARE(answer2.getCmdId(), cmd2);
   
-  QCOMPARE(answer3.GetResultStatus(), QAnswerBuffer::resTimeout);
-  QCOMPARE(answer3.GetResultCode(), (quint32)0);
-  QCOMPARE(answer3.GetCmdId(), cmd3);
+  QCOMPARE(answer3.getResultStatus(), QAnswerBuffer::resTimeout);
+  QCOMPARE(answer3.getResultCode(), (quint32)0);
+  QCOMPARE(answer3.getCmdId(), cmd3);
 
   // ======================================================================
   spy->clear();
@@ -119,4 +118,3 @@ void CTestAbstractExchanger::testCommandEnd()
 }
 
 // ======================================================================
-QTEST_MAIN(CTestAbstractExchanger)

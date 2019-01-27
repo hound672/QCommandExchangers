@@ -23,14 +23,14 @@ public:
   CCommandBuffer first() const;
   CCommandBuffer last() const;
 
-  void SetCmdId(quint32 cmdId) {mCmdId = cmdId;}
-  quint32 GetCmdId() const {return mCmdId;}
+  void getCmdId(quint32 cmdId) {mCmdId = cmdId;}
+  quint32 getCmdId() const {return mCmdId;}
 
-  void SetResultCode(quint32 resultStatus) {mResultCode = resultStatus;}
-  quint32 GetResultCode() const {return mResultCode;}
+  void setResultCode(quint32 resultStatus) {mResultCode = resultStatus;}
+  quint32 getResultCode() const {return mResultCode;}
 
-  void SetResultStatus(EResultStatus state) {mResultStatus = state;}
-  EResultStatus GetResultStatus() const {return mResultStatus;}
+  void setResultStatus(EResultStatus state) {mResultStatus = state;}
+  EResultStatus getResultStatus() const {return mResultStatus;}
 
 private:
   quint32 mCmdId; // идентификатор команды

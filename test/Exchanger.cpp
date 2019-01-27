@@ -13,7 +13,7 @@ CExchanger::CExchanger(QObject *parent) : QAbstractExchanger(parent)
 
 void CExchanger::putData(const QByteArray &data)
 {
-  GotIncomingData(data);
+  gotIncomingData(data);
 }
 
 // ======================================================================
