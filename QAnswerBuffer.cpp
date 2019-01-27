@@ -7,6 +7,7 @@ QAnswerBuffer::QAnswerBuffer(qint32 cmdId) :
   mResultCode(0),
   mResultStatus(EResultStatus::resOk)
 {
+	
 }
 
 // ======================================================================

@@ -155,3 +155,4 @@ void CTestCommandBuffer::testDiagParse()
      }
 }
 
+QTEST_MAIN(CTestCommandBuffer)

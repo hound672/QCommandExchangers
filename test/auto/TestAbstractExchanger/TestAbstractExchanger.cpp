@@ -9,6 +9,7 @@
 
 CTestAbstractExchanger::CTestAbstractExchanger(QObject *parent) : QObject(parent)
 {
+	qRegisterMetaType<QAnswerBuffer>("QAnswerBuffer");
   mExchanger = new CExchanger();
   mSpyAnswer = new QSignalSpy(mExchanger, SIGNAL(SignalGotAnswer(const QAnswerBuffer&)));
 }
@@ -54,9 +55,9 @@ void CTestAbstractExchanger::testGettingAnswer()
   QCOMPARE(mSpyAnswer->count(), 1);
   
   QAnswerBuffer answer = qvariant_cast<QAnswerBuffer>(mSpyAnswer->at(0).at(0));
-  QCOMPARE(answer.getResultStatus(), QAnswerBuffer::resOk);
-  QCOMPARE(answer.getResultCode(), (quint32)0);
-  QCOMPARE((int)answer.getCmdId(), cmdId);
+  QCOMPARE(answer.GetResultStatus(), QAnswerBuffer::resOk);
+  QCOMPARE(answer.GetResultCode(), (quint32)0);
+  QCOMPARE((int)answer.GetCmdId(), cmdId);
   
   mSpyAnswer->clear();
 }
@@ -98,17 +99,17 @@ void CTestAbstractExchanger::testCommandEnd()
   QAnswerBuffer answer2 = answersList.at(1);
   QAnswerBuffer answer3 = answersList.at(2);
   
-  QCOMPARE(answer1.getResultStatus(), QAnswerBuffer::resOk);
-  QCOMPARE(answer1.getResultCode(), (quint32)0);
-  QCOMPARE(answer1.getCmdId(), cmd1);
+  QCOMPARE(answer1.GetResultStatus(), QAnswerBuffer::resOk);
+  QCOMPARE(answer1.GetResultCode(), (quint32)0);
+  QCOMPARE(answer1.GetCmdId(), cmd1);
 
-  QCOMPARE(answer2.getResultStatus(), QAnswerBuffer::resOk);
-  QCOMPARE(answer2.getResultCode(), (quint32)0);
-  QCOMPARE(answer2.getCmdId(), cmd2);
+  QCOMPARE(answer2.GetResultStatus(), QAnswerBuffer::resOk);
+  QCOMPARE(answer2.GetResultCode(), (quint32)0);
+  QCOMPARE(answer2.GetCmdId(), cmd2);
   
-  QCOMPARE(answer3.getResultStatus(), QAnswerBuffer::resTimeout);
-  QCOMPARE(answer3.getResultCode(), (quint32)0);
-  QCOMPARE(answer3.getCmdId(), cmd3);
+  QCOMPARE(answer3.GetResultStatus(), QAnswerBuffer::resTimeout);
+  QCOMPARE(answer3.GetResultCode(), (quint32)0);
+  QCOMPARE(answer3.GetCmdId(), cmd3);
 
   // ======================================================================
   spy->clear();
@@ -118,3 +119,4 @@ void CTestAbstractExchanger::testCommandEnd()
 }
 
 // ======================================================================
+QTEST_MAIN(CTestAbstractExchanger)

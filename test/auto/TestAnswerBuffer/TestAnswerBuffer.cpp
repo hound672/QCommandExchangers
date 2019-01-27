@@ -86,3 +86,6 @@ void CTestAnswerBuffer::testFirstLast()
   CCommandBuffer buf2 = answerBuf.last();
 }
 
+// ======================================================================
+
+QTEST_MAIN(CTestAnswerBuffer)
