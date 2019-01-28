@@ -1,12 +1,11 @@
-#include <QDebug>
 #include <QTest>
 #include "TestCommandBuffer.h"
 
 static const CCommandBuffer::STextParsingDesc descrOk = {"$OK", ','};
-static const CCommandBuffer::STextParsingDesc descrErr = {"$ERR", ','};
-static const CCommandBuffer::STextParsingDesc testCmd = {"$TEST", ','};
-static const CCommandBuffer::STextParsingDesc testCmd2 = {"$TST", ','};
-static const CCommandBuffer::STextParsingDesc difSep = {"$DIFSEP", '/'};
+static const CCommandBuffer::STextParsingDesc descrErr = {"$ERR:", ','};
+static const CCommandBuffer::STextParsingDesc testCmd = {"$TEST:", ','};
+static const CCommandBuffer::STextParsingDesc testCmd2 = {"$TST:", ','};
+static const CCommandBuffer::STextParsingDesc difSep = {"$DIFSEP:", '/'};
 static const CCommandBuffer::STextParsingDesc diag = {"$DIAG", ','};
 
 

@@ -101,7 +101,7 @@ CCommandBuffer::EResultParse CCommandBuffer::parse(const CCommandBuffer::STextPa
     return EResultParse::parseErrorPrefix;
   }
   this->splitData = this->splitParams(parseDescr);
-  mStartPayload = parseDescr.mPrefix.size() + 1; // +1 для разделителя
+  mStartPayload = parseDescr.mPrefix.size();
   return EResultParse::parseOk;
 }
 
@@ -247,7 +247,7 @@ QByteArray CCommandBuffer::getParam(const QList<QByteArray> list, quint32 index)
 QList<QByteArray> CCommandBuffer::splitParams(const CCommandBuffer::STextParsingDesc &parseDescr) const
 {
   char separator = parseDescr.mSeparator;
-  int pos = parseDescr.mPrefix.size() + 1;
+  int pos = parseDescr.mPrefix.size();
   QByteArray tmpData = this->getLine().mid(pos);
   return tmpData.split(separator);
 }

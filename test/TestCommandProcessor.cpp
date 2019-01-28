@@ -1,4 +1,3 @@
-#include <QDebug>
 #include <QTest>
 #include <QThread>
 
@@ -11,9 +10,9 @@ static quint32 id3 = 789;
 CTestCommandProcessor::CTestCommandProcessor(QObject *parent) :
   QObject(parent)
 {
-  static CCommandBuffer::STextParsingDesc d1 = {"+NOT", ','};
-  static CCommandBuffer::STextParsingDesc d2 = {"+HI", ','};
-  static CCommandBuffer::STextParsingDesc d3 = {"+BYE", ','};
+  static CCommandBuffer::STextParsingDesc d1 = {"+NOT:", ','};
+  static CCommandBuffer::STextParsingDesc d2 = {"+HI:", ','};
+  static CCommandBuffer::STextParsingDesc d3 = {"+BYE:", ','};
 
   CCommandProcessor::TAnswersDescrList answersList;
   answersList.append(
@@ -107,7 +106,7 @@ void CTestCommandProcessor::testGettingAnswer()
   quint32 idTest = 1909;
 
   // Проверяем получение ответа об успешном выполнении команды
-  static CCommandBuffer::STextParsingDesc descr = {"+RESP", ','};
+  static CCommandBuffer::STextParsingDesc descr = {"+RESP:", ','};
   this->cmdProcessor->addAnswerWait(
           CCommandProcessor::SAnswerDescr(idTest, &descr, false)
         );
@@ -136,7 +135,7 @@ void CTestCommandProcessor::testGettingAnswerResult()
   quint32 idTest = 964;
 
   // Проверяем получение ответа об успешном выполнении команды
-  static CCommandBuffer::STextParsingDesc descr = {"+RESP", ','};
+  static CCommandBuffer::STextParsingDesc descr = {"+RESP:", ','};
   this->cmdProcessor->addAnswerWait(
           CCommandProcessor::SAnswerDescr(idTest, &descr, true)
         );
@@ -156,7 +155,7 @@ void CTestCommandProcessor::testGettingAnswerResult()
   this->spyGotAnswer->clear();
 
   // Проверяем получение ответа и статуса ошибки выполнения команды
-  static CCommandBuffer::STextParsingDesc descr2 = {"+RESP", ','};
+  static CCommandBuffer::STextParsingDesc descr2 = {"+RESP:", ','};
   this->cmdProcessor->addAnswerWait(
           CCommandProcessor::SAnswerDescr(idTest, &descr2, true)
         );
@@ -175,7 +174,7 @@ void CTestCommandProcessor::testGettingAnswerResult()
   this->spyGotAnswer->clear();
 
   // Проверяем получение ответа без получения статуса, хотя его ожидали, ошибка таймаута
-  static CCommandBuffer::STextParsingDesc descr3 = {"+RESP", ','};
+  static CCommandBuffer::STextParsingDesc descr3 = {"+RESP:", ','};
   this->cmdProcessor->addAnswerWait(
           CCommandProcessor::SAnswerDescr(idTest, &descr3, true)
         );
@@ -201,7 +200,7 @@ void CTestCommandProcessor::testManyString()
   quint32 idTest = 964;
 
   // Проверяем получение ответа об успешном выполнении команды
-  static CCommandBuffer::STextParsingDesc descr = {"+RESP", ','};
+  static CCommandBuffer::STextParsingDesc descr = {"+RESP:", ','};
   this->cmdProcessor->addAnswerWait(
           CCommandProcessor::SAnswerDescr(idTest, &descr, true)
         );
@@ -291,8 +290,8 @@ void CTestCommandProcessor::testManyCommands()
   quint32 idTest2 = 222;
 
   // Проверяем получение ответа об успешном выполнении команды
-  static CCommandBuffer::STextParsingDesc descr1 = {"+RESP", ','};
-  static CCommandBuffer::STextParsingDesc descr2 = {"+THERE", ','};
+  static CCommandBuffer::STextParsingDesc descr1 = {"+RESP:", ','};
+  static CCommandBuffer::STextParsingDesc descr2 = {"+THERE:", ','};
   this->cmdProcessor->addAnswerWait(
           CCommandProcessor::SAnswerDescr(idTest1, &descr1, false, 5000)
         );

@@ -1,8 +1,7 @@
-#include <QDebug>
 #include <QTest>
 #include "TestAnswerBuffer.h"
 
-static const CCommandBuffer::STextParsingDesc diag = {"$DIAG", ','};
+static const CCommandBuffer::STextParsingDesc diag = {"$DIAG:", ','};
 static const CCommandBuffer::STextParsingDesc descrOk = {"$OK", ','};
 
 

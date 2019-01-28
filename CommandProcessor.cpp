@@ -6,7 +6,7 @@
 
 // ---------------------------------------------------------------
 static const CCommandBuffer::STextParsingDesc descrOk = {"$OK", ','};
-static const CCommandBuffer::STextParsingDesc descrErr = {"$ERR", ','};
+static const CCommandBuffer::STextParsingDesc descrErr = {"$ERR:", ','};
 // ======================================================================
 
 // ======================================================================

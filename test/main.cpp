@@ -13,18 +13,19 @@
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
-  
+
+	// включаем вывод отладки модуля
   qputenv("QCOM_EXCH", QByteArray("1"));
 
   qRegisterMetaType<QAnswerBuffer>("QAnswerBuffer");
-	bool noError = true;
+	bool hasError = false;
   
-  noError &= QTest::qExec(new CTestCommandBuffer, argc, argv) == 0;
-  noError &= QTest::qExec(new CTestAnswerBuffer, argc, argv) == 0;
-  noError &= QTest::qExec(new CTestCommandProcessor, argc, argv) == 0;
-  noError &= QTest::qExec(new CTestAbstractExchanger, argc, argv) == 0;
+  hasError |= QTest::qExec(new CTestCommandBuffer, argc, argv) != 0;
+  hasError |= QTest::qExec(new CTestAnswerBuffer, argc, argv) != 0;
+  hasError |= QTest::qExec(new CTestCommandProcessor, argc, argv) != 0;
+  hasError |= QTest::qExec(new CTestAbstractExchanger, argc, argv) != 0;
 	
-	qDebug("No errors: %d", noError);
+	qDebug("Has errors: %d", hasError);
 
   return 0;
 }
