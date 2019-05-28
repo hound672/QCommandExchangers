@@ -203,7 +203,7 @@ int CCommandBuffer::getParamIntFromHex(quint32 index) const
   QByteArray value;
   this->getParam(index, value);
 
-  return value.toInt(NULL, 16);
+  return value.toUInt(NULL, 16);
 }
 
 // ======================================================================

@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QTest>
 #include "TestCommandBuffer.h"
 
@@ -11,7 +12,7 @@ static const CCommandBuffer::STextParsingDesc diag = {"$DIAG", ','};
 
 CTestCommandBuffer::CTestCommandBuffer(QObject *parent) : QObject(parent)
 {
-  buffer.append("$OK\r\n$ERR:256\r\n$TEST:9812,AABB,HELLO,1,2,3\r\n$TST:0.58,e=1,123\r\n$DIFSEP:1/2/3\r\n");
+  buffer.append("$OK\r\n$ERR:256\r\n$TEST:9812,AABBCCDD,HELLO,1,2,3\r\n$TST:0.58,e=1,123\r\n$DIFSEP:1/2/3\r\n");
 }
 
 void CTestCommandBuffer::testContructor()
@@ -65,7 +66,9 @@ void CTestCommandBuffer::testError()
       QCOMPARE(val1, 9812);
 
       int val2 = this->buffer.getParamIntFromHex(1);
-      QCOMPARE(val2, 0xAABB);
+			quint32 _c = 0xAABBCCDD;
+			qDebug() << "!!!: " << val2;
+      QCOMPARE(val2 == _c, true);
 
       QString val3 = this->buffer.getParamString(2);
       QCOMPARE(val3, QString("HELLO"));
