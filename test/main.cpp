@@ -21,9 +21,9 @@ int main(int argc, char *argv[])
 	bool hasError = false;
   
   hasError |= QTest::qExec(new CTestCommandBuffer, argc, argv) != 0;
-//  hasError |= QTest::qExec(new CTestAnswerBuffer, argc, argv) != 0;
-//  hasError |= QTest::qExec(new CTestCommandProcessor, argc, argv) != 0;
-//  hasError |= QTest::qExec(new CTestAbstractExchanger, argc, argv) != 0;
+  hasError |= QTest::qExec(new CTestAnswerBuffer, argc, argv) != 0;
+  hasError |= QTest::qExec(new CTestCommandProcessor, argc, argv) != 0;
+  hasError |= QTest::qExec(new CTestAbstractExchanger, argc, argv) != 0;
 	
 	qDebug("Has errors: %d", hasError);
 

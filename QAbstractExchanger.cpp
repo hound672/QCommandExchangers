@@ -40,7 +40,11 @@ QAbstractExchanger::QAbstractExchanger(ICommandLogger *commandLogger,
   */
 void QAbstractExchanger::sendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr)
 {
-  this->sendData(cmdToSend);
+	QByteArray data = cmdToSend;
+	// add \r\n at the end of data
+  data.append("\r\n");
+
+	this->sendData(data);
   this->mCommandProcessor->addAnswerWait(answerDescr);
   
   if (mCommandLogger) {
