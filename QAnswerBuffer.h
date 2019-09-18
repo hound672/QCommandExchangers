@@ -23,7 +23,7 @@ public:
   CCommandBuffer first() const;
   CCommandBuffer last() const;
 
-  void getCmdId(quint32 cmdId) {mCmdId = cmdId;}
+	void setCmdId(quint32 cmdId) {mCmdId = cmdId;}
   quint32 getCmdId() const {return mCmdId;}
 
   void setResultCode(quint32 resultStatus) {mResultCode = resultStatus;}

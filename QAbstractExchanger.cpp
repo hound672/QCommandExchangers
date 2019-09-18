@@ -41,12 +41,14 @@ QAbstractExchanger::QAbstractExchanger(ICommandLogger *commandLogger,
 void QAbstractExchanger::sendCommand(const QByteArray &cmdToSend, const CCommandProcessor::SAnswerDescr &answerDescr)
 {
 	QByteArray data = cmdToSend;
+	CCommandProcessor::SAnswerDescr _answerDescr = answerDescr;
+	_answerDescr.startSending();
 
 	this->sendData(data);
-  this->mCommandProcessor->addAnswerWait(answerDescr);
+	this->mCommandProcessor->addAnswerWait(_answerDescr);
   
   if (mCommandLogger) {
-    mCommandLogger->WriteRequest(answerDescr, cmdToSend);
+		mCommandLogger->WriteRequest(_answerDescr, cmdToSend);
   }
 }
 

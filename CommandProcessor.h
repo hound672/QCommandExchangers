@@ -44,6 +44,7 @@ public:
                  bool waitResult = false, quint32 timeout = 1000,
                  const CCommandBuffer::STextParsingDesc *descrOk = NULL);
     
+		void startSending();
     bool hasExpired() const;
 
   private:
@@ -56,7 +57,7 @@ public:
 public:
 
   explicit CCommandProcessor(const TAnswersDescrList *unexpectedAnswers, bool onlyIn = false, QObject *parent = 0);
-  void addAnswerWait(const SAnswerDescr &answerDescr);
+	void addAnswerWait(const SAnswerDescr &answerDescr);
   bool isEmpty();
   void clear();
 

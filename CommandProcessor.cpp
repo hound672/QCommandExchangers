@@ -32,10 +32,22 @@ CCommandProcessor::SAnswerDescr::SAnswerDescr(quint32 cmdId,
   mDescrOk(descrOk),
   mAnswer(cmdId)
 {
+	mTimer.start();
+
   if (answerDescr) mState |= stWaitAnswer;
   if (waitResult) mState |= stWaitResult;
-  
-  mTimer.start();
+}
+
+// ======================================================================
+
+/**
+	* @brief	Reset timer for waiting timer
+	* @param
+	* @retval
+	*/
+void CCommandProcessor::SAnswerDescr::startSending()
+{
+	mTimer.start();
 }
 
 // ======================================================================
