@@ -113,12 +113,12 @@ void QAbstractExchanger::makeSignalSlots()
   */
 void QAbstractExchanger::gotIncomingData(const QByteArray &answer)
 {
+    if (mCommandLogger) {
+      mCommandLogger->WriteRawData(answer);
+    }
+
   mCommandProcessor->SlotIncomingData(answer);
   emit this->SignalGotRawData(answer);
-  
-  if (mCommandLogger) {
-    mCommandLogger->WriteRawData(answer);
-  }
 }
 
 // ======================================================================
